@@ -341,10 +341,6 @@ NLP/
 
 ## 12. Kết quả hiện tại & Roadmap
 
-### Hiện tại
-- Accuracy: **~60%** (3/5 test cases)
-- Hay sai: `disappointed` (lịch sự giả), phương ngữ Nam
-
 ### Roadmap
 
 **Phase 1 — Cải thiện accuracy (ngắn hạn)**
