@@ -2,7 +2,7 @@
 
 > **Phiên bản:** 2.0 — Lambda Architecture  
 > **Giai đoạn:** Prototype / Research  
-> **Cập nhật:** 2025
+> **Cập nhật:** 2026
 
 ---
 
