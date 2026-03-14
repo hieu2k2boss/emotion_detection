@@ -128,8 +128,8 @@ Orchestrator
   │     └── conv + rag_block + slang_block + few-shot + CoT
   │
   ├── Step 4: LLM
-  │     ├── simple  → deepseek-chat
-  │     └── complex → deepseek-reasoner
+  │     ├── simple  → google/gemma-3-4b-it
+  │     └── complex → google/gemma-3-4b-it
   │
   └── Step 5: self_reflect()
         └── conf < 0.75 → retry (max 2 lần)
@@ -160,7 +160,7 @@ Các kỹ thuật prompt engineering áp dụng trong Agentic RAG:
 | Instruction Hierarchy | ✅ | Priority 1→4 (Safety > Task > Style > Format) |
 | Negative Prompting | ✅ | Liệt kê rõ KHÔNG làm gì |
 | Sliding Window | ✅ | Giữ 6 turns cuối |
-| Summarize Middle | ✅ | DeepSeek tóm tắt turns giữa |
+| Summarize Middle | ✅ | DeepSeek/google/gemma-3-4b-it tóm tắt turns giữa |
 | Smart Truncate | ✅ | Token counting + cắt dần |
 | Retrieval Compression | ✅ | Chỉ lấy context_clues liên quan |
 | Persona Calibration | ⬜ | Tune tone theo emotion (TODO) |
@@ -183,7 +183,7 @@ POST /chat
       │
       └─── NO
             │
-            ├── DeepSeek API ──────────────────────────────────▶ reply text
+            ├── DeepSeek / google/gemma-3-4b-it ──────────────────────────────────▶ reply text
             │
             └── Orchestrator (Agentic RAG)
                   ├── ContextAnalyzer
@@ -270,7 +270,7 @@ customers    ──┐
 
 | Layer | Technology | Lý do chọn |
 |---|---|---|
-| LLM API | DeepSeek-chat / DeepSeek-R1 | Chi phí thấp, tốt với tiếng Việt |
+| LLM | google/gemma-3-4b-it | Chi phí thấp, tốt với tiếng Việt |
 | Embedding | `BAAI/bge-m3` (1024 dims) | State-of-the-art multilingual |
 | Vector DB | ChromaDB (cosine, HNSW) | Nhẹ, không cần server riêng |
 | Keyword | BM25Okapi (`rank_bm25`) | Bổ sung cho vector search |
