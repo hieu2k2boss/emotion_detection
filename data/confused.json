@@ -1,0 +1,338 @@
+[
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em thấy đơn hàng của chị đang chờ xác nhận thanh toán qua ví điện tử. Chị vui lòng kiểm tra và xác nhận trên ứng dụng ví nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Ủa, tôi đã chuyển khoản rồi mà? Tôi chuyển từ ngân hàng chứ ko dùng ví."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, đơn hàng của chị chọn phương thức thanh toán là ví MoMo. Nếu chị đã chuyển khoản, chị cần cung cấp mã giao dịch để bên em đối soát ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Ý bạn là sao? Tôi chọn cái gì cũng được mà, tiền đã chuyển là xong chứ? Sao phải làm vậy?"
+      }
+    ],
+    "label": "confused",
+    "last_utterance": "Ý bạn là sao? Tôi chọn cái gì cũng được mà, tiền đã chuyển là xong chứ? Sao phải làm vậy?",
+    "context_clues": [
+      "hỏi ngược lại agent về quy trình",
+      "thể hiện sự không hiểu về yêu cầu"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, đơn hàng của anh đã được xác nhận và đang trong quá trình đóng gói ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Ok, vậy bao giờ ship vậy bạn?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, sau khi đóng gói xong, bộ phận kho sẽ chuyển sang cho đơn vị vận chuyển. Anh vui lòng chờ email thông báo có mã vận đơn nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Chờ email nữa hả? Rồi sau đó làm gì nữa? Tôi cứ tưởng đóng gói xong là giao tới liền chứ?"
+      }
+    ],
+    "label": "confused",
+    "last_utterance": "Chờ email nữa hả? Rồi sau đó làm gì nữa? Tôi cứ tưởng đóng gói xong là giao tới liền chứ?",
+    "context_clues": [
+      "hỏi về các bước tiếp theo",
+      "thể hiện hiểu lầm về quy trình"
+    ],
+    "region": "nam",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Em chào chị, chị muốn đổi size áo phải không ạ? Chị vui lòng điền form yêu cầu đổi hàng trên website và gửi sản phẩm về kho cho bên em nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Form trên website à? Form nào vậy bạn?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, chị vào mục \"Đổi trả\" trong tài khoản, chọn đơn hàng và làm theo hướng dẫn ạ. Sau đó in mã vận đơn và gửi hàng."
+      },
+      {
+        "role": "customer",
+        "text": "Trời ơi, rắc rối quá. Tôi tưởng alo cho bên bạn là được đổi chứ. Vậy giờ tôi phải làm từng bước đó hả?"
+      }
+    ],
+    "label": "confused",
+    "last_utterance": "Trời ơi, rắc rối quá. Tôi tưởng alo cho bên bạn là được đổi chứ. Vậy giờ tôi phải làm từng bước đó hả?",
+    "context_clues": [
+      "than phiền về độ phức tạp",
+      "hỏi xác nhận lại quy trình"
+    ],
+    "region": "nam",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, tài khoản của anh bị khóa do nhập sai OTP nhiều lần. Anh cần xác minh danh tính để mở khóa ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Xác minh kiểu gì? Gửi CMND cho bạn hay sao?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, anh chụp ảnh CMND mặt trước, mặt sau và ảnh chân dung cầm CMND, sau đó gửi về email support@company.com ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Chụp ảnh cầm CMND? Rồi gửi email? Sao phức tạp vậy? Tôi tưởng reset cái mật khẩu là xong chứ?"
+      }
+    ],
+    "label": "confused",
+    "last_utterance": "Chụp ảnh cầm CMND? Rồi gửi email? Sao phức tạp vậy? Tôi tưởng reset cái mật khẩu là xong chứ?",
+    "context_clues": [
+      "liệt kê các bước với giọng bối rối",
+      "so sánh với hiểu biết đơn giản hơn của bản thân"
+    ],
+    "region": "chung",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, sản phẩm lỗi phần cứng chị có thể mang đến trung tâm bảo hành ủy quyền của hãng để được kiểm tra ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Trung tâm nào? Ở đâu vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, tùy theo khu vực của chị. Chị cho em xem địa chỉ để em tra hỗ trợ tìm trung tâm gần nhất nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Ủa, vậy là tôi ko gửi về cho công ty bạn mà phải tự đi tìm chỗ khác à? Ý bạn là sao tôi ko hiểu?"
+      }
+    ],
+    "label": "confused",
+    "last_utterance": "Ủa, vậy là tôi ko gửi về cho công ty bạn mà phải tự đi tìm chỗ khác à? Ý bạn là sao tôi ko hiểu?",
+    "context_clues": [
+      "hỏi ngược lại để làm rõ",
+      "thể hiện sự ngạc nhiên về quy trình"
+    ],
+    "region": "nam",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, phí ship sẽ được hoàn lại cho anh trong vòng 7-10 ngày làm việc kể từ khi đơn hàng được xác nhận hoàn thành ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Hoàn lại vào đâu? Tài khoản ngân hàng của tôi hả?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, tùy vào phương thức thanh toán ban đầu của anh. Nếu anh thanh toán bằng thẻ, sẽ hoàn vào thẻ. Nếu bằng ví, hoàn vào ví."
+      },
+      {
+        "role": "customer",
+        "text": "Chờ đã, tôi thanh toán COD mà? Vậy tiền hoàn lại kiểu gì? Tôi thấy bể đầu mất."
+      }
+    ],
+    "label": "confused",
+    "last_utterance": "Chờ đã, tôi thanh toán COD mà? Vậy tiền hoàn lại kiểu gì? Tôi thấy bể đầu mất.",
+    "context_clues": [
+      "dùng từ phương ngữ Nam 'bể đầu'",
+      "hỏi về cách thức hoàn tiền cho phương thức không phổ biến"
+    ],
+    "region": "nam",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, để tích điểm cho đơn hàng này, chị cần kích hoạt chương trình thành viên VIP trên app trước khi thanh toán ạ."
+      },
+      {
+        "role": "customer",
+        "text": "App nào? Tôi mua trên web mà?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, chương trình chỉ áp dụng trên ứng dụng di động của bên em thôi chị. Chị tải app và đăng nhập bằng tài khoản web là được ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Trời, rắc rối vậy? Tôi tưởng mua xong tự động có điểm chứ. Vậy giờ tôi phải làm lại từ đầu trên app hả?"
+      }
+    ],
+    "label": "confused",
+    "last_utterance": "Trời, rắc rối vậy? Tôi tưởng mua xong tự động có điểm chứ. Vậy giờ tôi phải làm lại từ đầu trên app hả?",
+    "context_clues": [
+      "than phiền về sự rắc rối",
+      "hỏi xác nhận lại quy trình phức tạp"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, sản phẩm anh nhận được là phiên bản cũ, do hết hàng bản mới nên bên em đã giao bản tương đương ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Tương đương? Nghĩa là sao? Khác gì ko?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, về cơ bản chức năng giống nhau, chỉ khác một vài thông số kỹ thuật nhỏ thôi ạ. Anh có thể tham khảo thông tin trên website."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi ko hiểu. Tôi đặt bản A, bạn giao bản B. Vậy là khác mà? 'Tương đương' là sao? Giải thích rõ hơn đi."
+      }
+    ],
+    "label": "confused",
+    "last_utterance": "Tôi ko hiểu. Tôi đặt bản A, bạn giao bản B. Vậy là khác mà? 'Tương đương' là sao? Giải thích rõ hơn đi.",
+    "context_clues": [
+      "lặp lại và chất vấn thuật ngữ mơ hồ",
+      "yêu cầu giải thích rõ hơn"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, đơn hàng đổi trả của chị đã được duyệt. Chị sẽ nhận được hàng mới và cần thanh toán khoản chênh lệch nếu có ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Chênh lệch? Tôi đổi cùng giá mà?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, sản phẩm chị đổi hiện đang có chương trình khuyến mãi khác với lúc chị mua, nên có thể phát sinh chênh lệch ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Thôi kệ đi quá. Tôi đổi hàng thôi mà, sao lại phát sinh thêm tiền? Tôi ko hiểu cách tính này."
+      }
+    ],
+    "label": "confused",
+    "last_utterance": "Thôi kệ đi quá. Tôi đổi hàng thôi mà, sao lại phát sinh thêm tiền? Tôi ko hiểu cách tính này.",
+    "context_clues": [
+      "dùng từ phương ngữ Nam 'thôi kệ đi quá'",
+      "chất vấn logic của quy định"
+    ],
+    "region": "nam",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, để hủy đơn hàng đã xác nhận, anh cần chờ bộ phận kho xử lý và gửi yêu cầu hủy đến đơn vị vận chuyển ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Vậy là bao lâu mới hủy được?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, quy trình mất 24-48 giờ làm việc. Nếu đơn hàng đã được lấy đi, anh có thể từ chối nhận hàng khi shipper giao ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Chờ 2 ngày rồi còn phải từ chối nhận nữa? Sao nhiêu bước rườm rà vậy? Tôi tưởng bấm hủy là xong chứ?"
+      }
+    ],
+    "label": "confused",
+    "last_utterance": "Chờ 2 ngày rồi còn phải từ chối nhận nữa? Sao nhiêu bước rườm rà vậy? Tôi tưởng bấm hủy là xong chứ?",
+    "context_clues": [
+      "liệt kê các bước với sự bực bội",
+      "so sánh với kỳ vọng đơn giản"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, mã giảm giá của chị không áp dụng được vì đơn hàng chưa đủ điều kiện tối thiểu 500k ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Đủ mà, tôi tính ra 520k cơ mà?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, điều kiện là tổng giá trị sản phẩm, chưa bao gồm phí ship chị ạ. Giỏ hàng của chị hiện tại là 480k."
+      },
+      {
+        "role": "customer",
+        "text": "Ơ, vậy tính thêm ship mới đủ hay ko tính ship? Tôi rối quá, bạn nói rõ lại đi."
+      }
+    ],
+    "label": "confused",
+    "last_utterance": "Ơ, vậy tính thêm ship mới đủ hay ko tính ship? Tôi rối quá, bạn nói rõ lại đi.",
+    "context_clues": [
+      "thể hiện trực tiếp sự rối bời",
+      "yêu cầu giải thích lại"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, tài khoản của anh cần xác thực 2 lớp để bảo mật. Anh vui lòng cài đặt trong phần Cài đặt tài khoản > Bảo mật ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Xác thực 2 lớp là cài cái gì?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, anh có thể chọn xác thực bằng SMS hoặc ứng dụng Authenticator. Em khuyên dùng Authenticator an toàn hơn."
+      },
+      {
+        "role": "customer",
+        "text": "Authenticator là app gì? Tải ở đâu? Sao đăng nhập thôi mà phải làm nhiều thứ vậy? Tôi ko hiểu."
+      }
+    ],
+    "label": "confused",
+    "last_utterance": "Authenticator là app gì? Tải ở đâu? Sao đăng nhập thôi mà phải làm nhiều thứ vậy? Tôi ko hiểu.",
+    "context_clues": [
+      "hỏi về thuật ngữ/công cụ mới",
+      "chất vấn sự cần thiết của quy trình"
+    ],
+    "region": "chung",
+    "difficulty": "hard"
+  }
+]

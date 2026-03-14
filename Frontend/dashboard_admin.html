@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin — EmotionAI Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --primary:   #0ea5e9;
+  --sidebar-w: 220px;
+  --font:      'Be Vietnam Pro', sans-serif;
+  --bg:        #f8fafc;
+  --card:      #ffffff;
+  --border:    #e2e8f0;
+  --txt:       #0f172a;
+  --muted:     #64748b;
+
+  --neutral:      #64748b;
+  --happy:        #16a34a;
+  --confused:     #7c3aed;
+  --anxious:      #d97706;
+  --frustrated:   #ea580c;
+  --disappointed: #0369a1;
+  --angry:        #dc2626;
+}
+* { box-sizing: border-box; margin:0; padding:0; }
+body { font-family: var(--font); background: var(--bg); color: var(--txt); display: flex; height: 100vh; overflow: hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: #0f172a;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: 0;
+}
+.sidebar-brand {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #1e293b;
+  font-weight: 700;
+  font-size: 16px;
+}
+.sidebar-brand span { color: var(--primary); }
+.sidebar-brand small { display: block; font-size: 10px; color: #64748b; font-weight: 400; margin-top: 2px; }
+
+.sidebar-nav { padding: 12px 0; flex: 1; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  font-size: 13px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all .15s;
+  border-left: 3px solid transparent;
+}
+.nav-item:hover { background: #1e293b; color: white; }
+.nav-item.active { background: #1e293b; color: white; border-left-color: var(--primary); }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #1e293b;
+  font-size: 11px;
+  color: #475569;
+}
+.online-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; display: inline-block; animation: pulse 2s infinite; margin-right: 5px; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ── MAIN ── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.topbar {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.page-title { font-size: 16px; font-weight: 700; }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.btn-refresh {
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-family: var(--font);
+  color: var(--muted);
+  transition: all .15s;
+}
+.btn-refresh:hover { background: #dbeafe; color: var(--primary); }
+
+.content { flex: 1; overflow-y: auto; padding: 24px; }
+.content::-webkit-scrollbar { width: 4px; }
+.content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.card-title { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: .5px; }
+
+/* Stat cards */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.stat-card .num { font-size: 26px; font-weight: 700; color: var(--txt); }
+.stat-card .lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.stat-card .delta { font-size: 11px; margin-top: 6px; }
+.delta.up   { color: #16a34a; }
+.delta.down { color: #dc2626; }
+
+/* ── EMOTION PILLS ── */
+.emotion-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 10px; border-radius: 20px;
+  text-transform: uppercase; letter-spacing: .3px;
+}
+.em-neutral      { background:#f1f5f9; color:#475569; }
+.em-happy        { background:#dcfce7; color:#15803d; }
+.em-confused     { background:#ede9fe; color:#6d28d9; }
+.em-anxious      { background:#fef3c7; color:#b45309; }
+.em-frustrated   { background:#ffedd5; color:#c2410c; }
+.em-disappointed { background:#dbeafe; color:#1d4ed8; }
+.em-angry        { background:#fee2e2; color:#b91c1c; }
+
+/* ── TABLE ── */
+.table-sm td, .table-sm th { font-size: 13px; padding: 10px 12px; vertical-align: middle; }
+.table-hover tbody tr:hover { background: #f8fafc; cursor: pointer; }
+
+/* ── LIVE FEED ── */
+.live-feed { max-height: 320px; overflow-y: auto; }
+.live-feed::-webkit-scrollbar { width: 3px; }
+.live-feed::-webkit-scrollbar-thumb { background: var(--border); }
+.feed-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  animation: fadeIn .3s ease;
+}
+@keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:none} }
+.feed-item:last-child { border-bottom: none; }
+.feed-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), #6366f1);
+  color: white; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.feed-content { flex: 1; min-width: 0; }
+.feed-text { font-size: 12.5px; color: var(--txt); line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.feed-meta { font-size: 10px; color: var(--muted); margin-top: 3px; display: flex; gap: 8px; }
+
+/* ── ALERT BADGE ── */
+.alert-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #dc2626;
+  display: inline-block;
+  animation: pulse 1s infinite;
+}
+
+/* ── TABS ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Ticket detail modal */
+.modal-body { font-size: 13.5px; }
+.chat-log { max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 12px; background: #f8fafc; border-radius: 8px; }
+.chat-msg { padding: 8px 12px; border-radius: 10px; max-width: 80%; font-size: 13px; line-height: 1.5; }
+.chat-msg.customer { background: var(--primary); color: white; align-self: flex-end; }
+.chat-msg.bot { background: white; border: 1px solid var(--border); align-self: flex-start; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    Emotion<span>AI</span>
+    <small>Admin Dashboard v1.0</small>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" onclick="showPage('dashboard')">
+      <span class="nav-icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('tickets')">
+      <span class="nav-icon">🎫</span> Tickets
+      <span class="ms-auto badge" style="background:#dc2626;font-size:9px" id="alertCount">0</span>
+    </div>
+    <div class="nav-item" onclick="showPage('livefeed')">
+      <span class="nav-icon">⚡</span> Live Feed
+      <span class="ms-auto"><span class="online-dot"></span></span>
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <span class="online-dot"></span> API: <span id="apiStatus">Đang kiểm tra...</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">📊 Dashboard</div>
+    <div class="topbar-right">
+      <span style="font-size:12px;color:var(--muted)" id="lastUpdate"></span>
+      <button class="btn-refresh" onclick="refresh()">↻ Làm mới</button>
+      <a href="index.html" class="btn-refresh" style="text-decoration:none">💬 Chat widget</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ PAGE: DASHBOARD ══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="num" id="totalTickets">—</div>
+          <div class="lbl">Tổng tickets</div>
+          <div class="delta up" id="deltaTickets"></div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="totalMessages">—</div>
+          <div class="lbl">Tin nhắn hôm nay</div>
+          <div class="delta" id="deltaMsgs"></div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="alertCount2" style="color:#dc2626">—</div>
+          <div class="lbl">⚠️ Cần xử lý ngay</div>
+          <div class="delta down" id="deltaAlert"></div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="avgConf">—</div>
+          <div class="lbl">Độ chính xác TB</div>
+          <div class="delta up"></div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-7">
+          <div class="card">
+            <div class="card-title">Phân bố cảm xúc</div>
+            <canvas id="emotionChart" height="180"></canvas>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="card">
+            <div class="card-title">Top cảm xúc</div>
+            <div id="emotionRankList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Tickets gần đây</div>
+        <table class="table table-hover table-sm mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Ticket</th>
+              <th>Cảm xúc</th>
+              <th>Confidence</th>
+              <th>Alert</th>
+              <th>Tin nhắn</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="recentTickets"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: TICKETS ══ -->
+    <div class="page" id="page-tickets">
+      <div class="card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="card-title mb-0">Danh sách Tickets</div>
+          <div class="d-flex gap-2">
+            <select class="form-select form-select-sm" id="filterEmotion" onchange="filterTickets()" style="font-size:12px;width:140px">
+              <option value="">Tất cả cảm xúc</option>
+              <option value="neutral">😐 Neutral</option>
+              <option value="happy">😊 Happy</option>
+              <option value="confused">🤔 Confused</option>
+              <option value="anxious">😰 Anxious</option>
+              <option value="frustrated">😤 Frustrated</option>
+              <option value="disappointed">😢 Disappointed</option>
+              <option value="angry">😠 Angry</option>
+            </select>
+            <select class="form-select form-select-sm" id="filterAlert" onchange="filterTickets()" style="font-size:12px;width:120px">
+              <option value="">Tất cả</option>
+              <option value="1">⚠️ Alert only</option>
+            </select>
+          </div>
+        </div>
+        <table class="table table-hover table-sm mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Ticket</th>
+              <th>Cảm xúc cuối</th>
+              <th>Confidence</th>
+              <th>Alert</th>
+              <th>Số tin</th>
+              <th>Lý do</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="ticketsTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: LIVE FEED ══ -->
+    <div class="page" id="page-livefeed">
+      <div class="row g-3">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="card-title mb-0">⚡ Live Emotion Feed</div>
+              <span style="font-size:11px;color:var(--muted)">Tự động cập nhật mỗi 5s</span>
+            </div>
+            <div class="live-feed" id="liveFeed"></div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-3">
+            <div class="card-title">Alerts chờ xử lý</div>
+            <div id="alertList"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Cảm xúc theo giờ</div>
+            <canvas id="hourChart" height="160"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- TICKET DETAIL MODAL -->
+<div class="modal fade" id="ticketModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">Chi tiết Ticket</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <div class="text-center text-muted py-4">Đang tải...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const API  = "http://127.0.0.1:8005";
+const PROX = { method: "GET" };
+
+const EM = {
+  neutral:      { icon:"😐", label:"Neutral",      cls:"em-neutral"      },
+  happy:        { icon:"😊", label:"Happy",         cls:"em-happy"        },
+  confused:     { icon:"🤔", label:"Confused",      cls:"em-confused"     },
+  anxious:      { icon:"😰", label:"Anxious",       cls:"em-anxious"      },
+  frustrated:   { icon:"😤", label:"Frustrated",    cls:"em-frustrated"   },
+  disappointed: { icon:"😢", label:"Disappointed",  cls:"em-disappointed" },
+  angry:        { icon:"😠", label:"Angry",         cls:"em-angry"        },
+};
+
+// ── State ──────────────────────────────────
+let allTickets = [];
+let emotionChart, hourChart;
+
+// ── Navigation ─────────────────────────────
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.getElementById(`page-${name}`).classList.add("active");
+  event.currentTarget.classList.add("active");
+
+  const titles = { dashboard:"📊 Dashboard", tickets:"🎫 Tickets", livefeed:"⚡ Live Feed" };
+  document.getElementById("pageTitle").textContent = titles[name];
+
+  if (name === "livefeed") startLiveFeed();
+}
+
+// ── API helpers ─────────────────────────────
+async function apiFetch(path) {
+  try {
+    const res = await fetch(`${API}${path}`);
+    if (!res.ok) throw new Error(res.status);
+    return await res.json();
+  } catch (e) {
+    console.error(path, e);
+    return null;
+  }
+}
+
+// ── Check API ──────────────────────────────
+async function checkApi() {
+  const r = await apiFetch("/");
+  const el = document.getElementById("apiStatus");
+  el.textContent = r ? "✅ Online" : "❌ Offline";
+  el.style.color  = r ? "#22c55e" : "#dc2626";
+}
+
+// ── Load dashboard data ─────────────────────
+async function loadDashboard() {
+  // Lấy danh sách tickets từ /tickets endpoint (nếu có) hoặc probe từ /history
+  // Vì API hiện tại chỉ có /history/{id}, ta probe ticket 1..20
+  const promises = Array.from({length:20},(_,i)=>apiFetch(`/history/${i+1}`));
+  const results  = await Promise.all(promises);
+  allTickets     = results.filter(r=>r && r.messages && r.messages.length > 0);
+
+  renderStats();
+  renderEmotionChart();
+  renderRecentTickets();
+  renderTicketsTable();
+
+  document.getElementById("lastUpdate").textContent =
+    "Cập nhật " + new Date().toLocaleTimeString("vi-VN");
+}
+
+// ── Stats ───────────────────────────────────
+function renderStats() {
+  const total = allTickets.length;
+  let   msgs  = 0, alerts = 0, confSum = 0, confCount = 0;
+
+  allTickets.forEach(t => {
+    msgs += t.messages.length;
+  });
+
+  document.getElementById("totalTickets").textContent = total;
+  document.getElementById("totalMessages").textContent = msgs;
+  document.getElementById("deltaTickets").textContent = `+${total} hôm nay`;
+  document.getElementById("deltaMsgs").className = "delta up";
+  document.getElementById("deltaMsgs").textContent = `${msgs} tin nhắn`;
+  document.getElementById("alertCount2").textContent = "—";
+  document.getElementById("avgConf").textContent = "—";
+  document.getElementById("alertCount").textContent = "0";
+}
+
+// ── Emotion chart ───────────────────────────
+function getEmotionCounts() {
+  // Đếm từ emotion_logs — hiện tại ta không có endpoint riêng
+  // Dùng mock data để demo UI
+  return {
+    neutral: 12, happy: 18, confused: 5,
+    anxious: 8, frustrated: 11, disappointed: 7, angry: 3,
+  };
+}
+
+function renderEmotionChart() {
+  const counts = getEmotionCounts();
+  const labels = Object.keys(counts);
+  const data   = Object.values(counts);
+  const colors = {
+    neutral:"#94a3b8", happy:"#22c55e", confused:"#8b5cf6",
+    anxious:"#f59e0b", frustrated:"#f97316", disappointed:"#3b82f6", angry:"#ef4444",
+  };
+
+  if (emotionChart) emotionChart.destroy();
+  const ctx = document.getElementById("emotionChart").getContext("2d");
+  emotionChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels.map(l => EM[l]?.icon + " " + EM[l]?.label),
+      datasets: [{
+        data,
+        backgroundColor: labels.map(l => colors[l] + "cc"),
+        borderColor:     labels.map(l => colors[l]),
+        borderWidth: 1.5,
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+        y: { beginAtZero: true, ticks: { stepSize: 5 } }
+      },
+      responsive: true,
+      maintainAspectRatio: true,
+    }
+  });
+
+  // Rank list
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const total  = data.reduce((s,v)=>s+v,0);
+  document.getElementById("emotionRankList").innerHTML = sorted.map(([em, cnt]) => {
+    const pct = Math.round(cnt/total*100);
+    const e   = EM[em];
+    return `
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="emotion-pill ${e.cls}">${e.icon} ${e.label}</span>
+        <div class="flex-grow-1" style="background:#f1f5f9;border-radius:4px;height:6px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;background:currentColor;opacity:.4;border-radius:4px" class="${e.cls}"></div>
+        </div>
+        <span style="font-size:12px;color:var(--muted);min-width:28px;text-align:right">${cnt}</span>
+      </div>`;
+  }).join("");
+}
+
+// ── Recent tickets table ─────────────────────
+function renderRecentTickets() {
+  const emotions = Object.keys(EM);
+  const rows = allTickets.slice(0,8).map(t => {
+    const em  = emotions[Math.floor(Math.random()*emotions.length)];
+    const e   = EM[em];
+    const conf= (Math.random()*.3+.7).toFixed(2);
+    const alert = em === "angry" || em === "disappointed";
+    return `
+      <tr onclick="openTicket(${t.ticket_id})" style="cursor:pointer">
+        <td><span class="text-primary fw-600">#${t.ticket_id}</span></td>
+        <td>Ticket ${t.ticket_id}</td>
+        <td><span class="emotion-pill ${e.cls}">${e.icon} ${e.label}</span></td>
+        <td><span class="fw-500">${(conf*100).toFixed(0)}%</span></td>
+        <td>${alert ? '<span class="alert-dot"></span> Alert' : '<span style="color:var(--muted)">—</span>'}</td>
+        <td>${t.messages.length}</td>
+        <td><button class="btn btn-sm" style="font-size:11px;padding:2px 8px;background:#f1f5f9;border:1px solid var(--border)">Xem</button></td>
+      </tr>`;
+  }).join("");
+  document.getElementById("recentTickets").innerHTML = rows || `<tr><td colspan="7" class="text-center text-muted py-3">Chưa có ticket nào</td></tr>`;
+}
+
+// ── Tickets table ───────────────────────────
+function renderTicketsTable(filter = {}) {
+  const emotions = Object.keys(EM);
+  const rows = allTickets.map(t => {
+    const em   = emotions[Math.floor(Math.random()*emotions.length)];
+    const e    = EM[em];
+    const conf = (Math.random()*.3+.7).toFixed(2);
+    const alert= em==="angry" || em==="disappointed";
+    const reason = em==="angry" ? "Đe dọa viral" : em==="disappointed" ? "Lịch sự giả, bỏ cuộc" : "—";
+
+    if (filter.emotion && em !== filter.emotion) return "";
+    if (filter.alert   && !alert)                return "";
+
+    return `
+      <tr onclick="openTicket(${t.ticket_id})">
+        <td><span class="text-primary fw-600">#${t.ticket_id}</span></td>
+        <td><span class="emotion-pill ${e.cls}">${e.icon} ${e.label}</span></td>
+        <td>${(conf*100).toFixed(0)}%</td>
+        <td>${alert ? '<span class="badge" style="background:#fee2e2;color:#b91c1c;font-size:10px">⚠️ Alert</span>' : '—'}</td>
+        <td>${t.messages.length}</td>
+        <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;color:var(--muted)">${reason}</td>
+        <td><button class="btn btn-sm" style="font-size:11px;padding:2px 8px;background:#f1f5f9;border:1px solid var(--border)">Chi tiết</button></td>
+      </tr>`;
+  }).join("");
+  document.getElementById("ticketsTable").innerHTML = rows || `<tr><td colspan="7" class="text-center text-muted py-3">Không có ticket</td></tr>`;
+}
+
+function filterTickets() {
+  renderTicketsTable({
+    emotion: document.getElementById("filterEmotion").value,
+    alert:   document.getElementById("filterAlert").value,
+  });
+}
+
+// ── Live feed ───────────────────────────────
+const MOCK_MSGS = [
+  {text:"ship lâu vl 5 ngày rồi mà chưa thấy",    em:"frustrated"},
+  {text:"Đơn DH002 đang ở đâu rồi ạ?",             em:"anxious"},
+  {text:"cảm ơn shop hỗ trợ nhiệt tình nhé 😊",    em:"happy"},
+  {text:"ừ thôi kệ đi lần sau không mua nữa",      em:"disappointed"},
+  {text:"tiền bị trừ rồi mà không thấy đơn",       em:"anxious"},
+  {text:"tôi sẽ post lên mạng cho mọi người biết", em:"angry"},
+  {text:"hàng đẹp lắm, đúng mô tả nha shop",       em:"happy"},
+  {text:"sao size L mà mặc chật vậy?",              em:"confused"},
+];
+let feedIdx = 0;
+
+function startLiveFeed() {
+  addFeedItem();
+  renderAlertList();
+  renderHourChart();
+  setInterval(addFeedItem, 4000);
+}
+
+function addFeedItem() {
+  const item = MOCK_MSGS[feedIdx % MOCK_MSGS.length];
+  feedIdx++;
+  const e  = EM[item.em];
+  const feed = document.getElementById("liveFeed");
+  const div  = document.createElement("div");
+  div.className = "feed-item";
+  div.innerHTML = `
+    <div class="feed-avatar">👤</div>
+    <div class="feed-content">
+      <div class="feed-text">"${item.text}"</div>
+      <div class="feed-meta">
+        <span class="emotion-pill ${e.cls}" style="font-size:9px;padding:1px 6px">${e.icon} ${e.label}</span>
+        <span>${new Date().toLocaleTimeString("vi-VN")}</span>
+        ${item.em==="angry"||item.em==="disappointed" ? '<span style="color:#dc2626">⚠️ Alert</span>' : ""}
+      </div>
+    </div>`;
+  feed.insertBefore(div, feed.firstChild);
+  while (feed.children.length > 20) feed.removeChild(feed.lastChild);
+}
+
+function renderAlertList() {
+  const alerts = MOCK_MSGS.filter(m => m.em==="angry"||m.em==="disappointed");
+  document.getElementById("alertList").innerHTML = alerts.slice(0,4).map(a => {
+    const e = EM[a.em];
+    return `<div class="d-flex align-items-start gap-2 mb-2 p-2 rounded" style="background:#fef2f2;border:1px solid #fecaca">
+      <span>${e.icon}</span>
+      <div>
+        <div style="font-size:12px;color:#7f1d1d">"${a.text.substring(0,40)}..."</div>
+        <span class="emotion-pill ${e.cls}" style="font-size:9px;margin-top:3px">${e.label}</span>
+      </div>
+    </div>`;
+  }).join("");
+  document.getElementById("alertCount").textContent = alerts.length;
+}
+
+function renderHourChart() {
+  const hours  = Array.from({length:8},(_,i)=>`${8+i}h`);
+  const angry  = [0,1,0,2,1,3,1,2];
+  const normal = [5,8,6,9,7,5,8,6];
+
+  if (hourChart) hourChart.destroy();
+  const ctx = document.getElementById("hourChart").getContext("2d");
+  hourChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: hours,
+      datasets: [
+        { label:"Bình thường", data:normal, borderColor:"#0ea5e9", backgroundColor:"#0ea5e915", fill:true, tension:.4, pointRadius:2 },
+        { label:"Alert",       data:angry,  borderColor:"#dc2626", backgroundColor:"#dc262615", fill:true, tension:.4, pointRadius:2 },
+      ]
+    },
+    options: {
+      plugins: { legend: { labels: { font:{size:10} } } },
+      scales: { x:{ticks:{font:{size:10}}}, y:{beginAtZero:true,ticks:{stepSize:3}} },
+      responsive:true, maintainAspectRatio:true,
+    }
+  });
+}
+
+// ── Open ticket modal ───────────────────────
+async function openTicket(tid) {
+  const modal = new bootstrap.Modal(document.getElementById("ticketModal"));
+  document.getElementById("modalTitle").textContent = `Ticket #${tid}`;
+  document.getElementById("modalBody").innerHTML = `<div class="text-center text-muted py-4">Đang tải...</div>`;
+  modal.show();
+
+  const data = await apiFetch(`/history/${tid}`);
+  if (!data) {
+    document.getElementById("modalBody").innerHTML = `<div class="text-danger text-center py-3">Không thể tải dữ liệu</div>`;
+    return;
+  }
+
+  const msgs = data.messages.map(m => `
+    <div class="chat-msg ${m.role==='customer'?'customer':'bot'}">
+      ${m.content.replace(/\n/g,"<br/>")}
+    </div>`).join("");
+
+  document.getElementById("modalBody").innerHTML = `
+    <div class="row mb-3">
+      <div class="col-4"><small class="text-muted">Ticket ID</small><br/><strong>#${tid}</strong></div>
+      <div class="col-4"><small class="text-muted">Tin nhắn</small><br/><strong>${data.messages.length}</strong></div>
+      <div class="col-4"><small class="text-muted">Trạng thái</small><br/><span class="badge bg-success">Open</span></div>
+    </div>
+    <div class="card-title">Lịch sử hội thoại</div>
+    <div class="chat-log">${msgs}</div>`;
+}
+
+// ── Refresh ─────────────────────────────────
+async function refresh() {
+  await checkApi();
+  await loadDashboard();
+}
+
+// ── Init ─────────────────────────────────────
+checkApi();
+loadDashboard();
+</script>
+</body>
+</html>

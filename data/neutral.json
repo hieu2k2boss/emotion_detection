@@ -1,0 +1,534 @@
+[
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em có thể hỗ trợ gì cho anh ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Cho tôi hỏi đơn hàng #DH12345 đang ở đâu rồi?"
+      },
+      {
+        "role": "agent",
+        "text": "Để em kiểm tra giúp anh nhé. Đơn hàng của anh đang được vận chuyển, dự kiến giao vào ngày mai."
+      },
+      {
+        "role": "customer",
+        "text": "Vậy phí ship của đơn này là bao nhiêu?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Vậy phí ship của đơn này là bao nhiêu?",
+    "context_clues": [
+      "hỏi thông tin",
+      "không có từ cảm xúc"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, Shop xin nghe ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Sản phẩm áo thun này còn size L ko?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ còn chị nhé. Chị muốn đặt hàng không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Khoảng mấy ngày thì nhận được hàng vậy?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Khoảng mấy ngày thì nhận được hàng vậy?",
+    "context_clues": [
+      "hỏi thời gian giao hàng",
+      "câu hỏi thông thường"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Xin chào, anh/chị cần hỗ trợ gì ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi muốn hỏi chính sách đổi trả của bên mình."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, bên em cho đổi trả trong vòng 7 ngày nếu sản phẩm còn nguyên tem mác ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Vậy mình đổi ở đâu?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Vậy mình đổi ở đâu?",
+    "context_clues": [
+      "hỏi địa điểm",
+      "trung lập"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Alo, em nghe đây ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Bên mình nhận ship COD ko?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ có anh ạ, tất cả đơn hàng đều hỗ trợ COD."
+      },
+      {
+        "role": "customer",
+        "text": "Giới hạn giá trị đơn COD là bao nhiêu?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Giới hạn giá trị đơn COD là bao nhiêu?",
+    "context_clues": [
+      "hỏi điều kiện thanh toán",
+      "không biểu cảm"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, bộ phận CSKH đây ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Tài khoản của tôi bị khóa, làm sao mở lại?"
+      },
+      {
+        "role": "agent",
+        "text": "Anh vui lòng cung cấp số điện thoại đăng ký để em kiểm tra nhé."
+      },
+      {
+        "role": "customer",
+        "text": "SĐT của tôi là 0912345678."
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "SĐT của tôi là 0912345678.",
+    "context_clues": [
+      "cung cấp thông tin",
+      "trả lời trực tiếp"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Dạ em chào chị, chị cần hỗ trợ gì ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Đơn hàng #DH67890 của tôi đã thanh toán rồi, khi nào xác nhận?"
+      },
+      {
+        "role": "agent",
+        "text": "Chị cho em xin mã đơn để em kiểm tra tình trạng thanh toán nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Mã đơn là DH67890, tôi chuyển khoản lúc 10h sáng."
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Mã đơn là DH67890, tôi chuyển khoản lúc 10h sáng.",
+    "context_clues": [
+      "cung cấp thông tin chi tiết",
+      "không kèm cảm xúc"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, anh có câu hỏi gì không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Sản phẩm này có bảo hành không?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ có anh ạ, bảo hành 12 tháng tại các trung tâm ủy quyền."
+      },
+      {
+        "role": "customer",
+        "text": "Vậy danh sách trung tâm bảo hành ở đâu?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Vậy danh sách trung tâm bảo hành ở đâu?",
+    "context_clues": [
+      "hỏi thông tin chi tiết",
+      "tiếp nối câu trả lời"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Em chào chị, chị cần tư vấn gì ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi muốn hủy đơn hàng #DH11121."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ được ạ, để em kiểm tra xem đơn đã xử lý chưa. Chị cho em lý do hủy nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi đổi ý không mua nữa."
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Tôi đổi ý không mua nữa.",
+    "context_clues": [
+      "nêu lý do đơn giản",
+      "không giải thích dài"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em có thể giúp gì cho anh?"
+      },
+      {
+        "role": "customer",
+        "text": "Bên mình có hỗ trợ giao hàng ngoài giờ không?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ có anh ạ, nhưng sẽ có phụ phí. Anh muốn giao vào khung giờ nào?"
+      },
+      {
+        "role": "customer",
+        "text": "Phụ phí là bao nhiêu?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Phụ phí là bao nhiêu?",
+    "context_clues": [
+      "hỏi chi phí",
+      "tiếp tục thắc mắc"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Alo, shop nghe đây."
+      },
+      {
+        "role": "customer",
+        "text": "Đơn hàng của tôi đã đóng gói chưa?"
+      },
+      {
+        "role": "agent",
+        "text": "Chị cho em xin mã đơn để em kiểm tra tình trạng nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Mã đơn là DH99988."
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Mã đơn là DH99988.",
+    "context_clues": [
+      "cung cấp thông tin",
+      "ngắn gọn"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, bên em xin nghe ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi muốn đổi sản phẩm bị lỗi."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ vâng, chị vui lòng chụp hình lỗi gửi cho em nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Lỗi gửi qua email hay tin nhắn?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Lỗi gửi qua email hay tin nhắn?",
+    "context_clues": [
+      "hỏi phương thức",
+      "trung lập"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Dạ em chào anh, anh cần hỗ trợ gì ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi quên mật khẩu đăng nhập, làm sao lấy lại?"
+      },
+      {
+        "role": "agent",
+        "text": "Anh vào trang đăng nhập, chọn 'Quên mật khẩu' và làm theo hướng dẫn nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Có cần xác minh số điện thoại không?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Có cần xác minh số điện thoại không?",
+    "context_clues": [
+      "hỏi điều kiện",
+      "thắc mắc thêm"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em có thể giúp gì cho chị?"
+      },
+      {
+        "role": "customer",
+        "text": "Sản phẩm này còn hàng không?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ còn chị nhé, chị muốn đặt mua bao nhiêu cái?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi muốn mua 2 cái."
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Tôi muốn mua 2 cái.",
+    "context_clues": [
+      "thông báo số lượng",
+      "không cảm xúc"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Alo, bên em nghe đây."
+      },
+      {
+        "role": "customer",
+        "text": "Đơn hàng của tôi đã giao nhưng tôi không có nhà, giờ làm sao?"
+      },
+      {
+        "role": "agent",
+        "text": "Anh có thể yêu cầu giao lại hoặc đến bưu cục nhận hàng ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Vậy tôi đến bưu cục nào?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Vậy tôi đến bưu cục nào?",
+    "context_clues": [
+      "hỏi địa điểm cụ thể",
+      "tiếp tục vấn đề"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em hỗ trợ gì được cho anh ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi muốn kiểm tra lịch sử giao dịch."
+      },
+      {
+        "role": "agent",
+        "text": "Anh vào mục 'Tài khoản' trên website để xem nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi tìm không thấy mục đó."
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Tôi tìm không thấy mục đó.",
+    "context_clues": [
+      "thông báo vấn đề",
+      "không phàn nàn"
+    ],
+    "region": "chung",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Dạ chào chị, shop xin nghe."
+      },
+      {
+        "role": "customer",
+        "text": "Sản phẩm tôi nhận bị sai màu, tôi muốn đổi."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ được ạ, chị vui lòng cung cấp hình ảnh sản phẩm và hóa đơn nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi gửi hình qua Zalo được không?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Tôi gửi hình qua Zalo được không?",
+    "context_clues": [
+      "hỏi phương thức gửi",
+      "trung lập"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, anh có thắc mắc gì không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi muốn biết thời gian bảo hành cho sản phẩm này."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ sản phẩm này bảo hành 24 tháng ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Bảo hành có tính phí không?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Bảo hành có tính phí không?",
+    "context_clues": [
+      "hỏi chi phí",
+      "tiếp tục thông tin"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Alo, em nghe đây."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi đặt hàng hôm qua, khi nào ship?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ đơn hàng sẽ được xử lý trong 24h và giao trong 2-3 ngày ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Vậy tôi có thể theo dõi đơn ở đâu?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Vậy tôi có thể theo dõi đơn ở đâu?",
+    "context_clues": [
+      "hỏi cách thức",
+      "không cảm xúc"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, bộ phận CSKH đây ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi muốn hỏi về chương trình khuyến mãi hiện tại."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ hiện tại đang có giảm giá 20% cho đơn hàng từ 500k ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Mã giảm giá áp dụng thế nào?"
+      }
+    ],
+    "label": "neutral",
+    "last_utterance": "Mã giảm giá áp dụng thế nào?",
+    "context_clues": [
+      "hỏi điều kiện",
+      "tiếp tục thắc mắc"
+    ],
+    "region": "chung",
+    "difficulty": "hard"
+  }
+]

@@ -1,0 +1,298 @@
+[
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em thấy anh có đơn hàng #1234 đang chờ xác nhận. Em hỗ trợ gì cho anh ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Đơn này tôi đặt từ hôm qua mà giờ vẫn chưa thấy ship. Sao chậm vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ anh cho em xin lỗi, đơn của anh đang trong quy trình xử lý, tầm 2-3h nữa sẽ được giao cho đơn vị vận chuyển ạ."
+      },
+      {
+        "role": "customer",
+        "text": "2-3h nữa? Vậy là tối nay mới ship? Tôi cần gấp mà."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ em rất tiếc, hiện tại kho đang xử lý nhiều đơn nên có chậm trễ ạ. Mong anh thông cảm."
+      },
+      {
+        "role": "customer",
+        "text": "Thôi kệ đi quá! Lần đầu đặt mà đã thế này. Tôi sẽ đăng bài review 1 sao cho mn biết dịch vụ của bên anh dở thế nào."
+      }
+    ],
+    "label": "angry",
+    "last_utterance": "Thôi kệ đi quá! Lần đầu đặt mà đã thế này. Tôi sẽ đăng bài review 1 sao cho mn biết dịch vụ của bên anh dở thế nào.",
+    "context_clues": [
+      "đe dọa đăng bài review 1 sao",
+      "từ ngữ bực bội 'thôi kệ đi quá'",
+      "nhấn mạnh lần đầu mà đã có trải nghiệm tệ"
+    ],
+    "region": "nam",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em thấy chị có yêu cầu đổi size áo. Chị có thể cho em biết lý do được không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi đặt size L nhưng nhận về size S. Mặc ko vừa."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ vâng, chị có thể gửi lại sản phẩm và chúng em sẽ đổi lại cho chị. Chị chịu phí ship về nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Hả? Lỗi của shop mà bắt tôi chịu ship? Vô lý vcl."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ em xin lỗi, nhưng theo chính sách, bên em chỉ hỗ trợ phí ship đổi cho lỗi do nhà sản xuất. Trường hợp này có thể do nhầm lẫn đóng gói."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi yêu cầu gặp quản lý ngay. Ko giải quyết được thì tôi sẽ làm ầm lên mạng xã hội cho."
+      }
+    ],
+    "label": "angry",
+    "last_utterance": "Tôi yêu cầu gặp quản lý ngay. Ko giải quyết được thì tôi sẽ làm ầm lên mạng xã hội cho.",
+    "context_clues": [
+      "yêu cầu gặp quản lý ngay",
+      "đe dọa 'làm ầm lên mạng xã hội'",
+      "dùng từ 'vô lý vcl'"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em hỗ trợ anh về vấn đề thanh toán. Anh có thể mô tả lỗi gặp phải không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi thanh toán 2 lần rồi mà đơn hàng vẫn báo chưa nhận dc tiền. Tiền đâu mất rồi?"
+      },
+      {
+        "role": "agent",
+        "text": "Anh cho em xin mã đơn và số điện thoại để em kiểm tra nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Đây #5678, 0909xxx. Check nhanh dùm."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ em kiểm tra thấy hệ thống ghi nhận 1 giao dịch thành công, 1 giao dịch đang xử lý. Tiền sẽ được hoàn trong 5-7 ngày làm việc ạ."
+      },
+      {
+        "role": "customer",
+        "text": "5-7 ngày? Chắc thôi! Tôi báo ngân hàng và tố cáo lên cơ quan chức năng luôn cho xong. Lừa đảo à?"
+      }
+    ],
+    "label": "angry",
+    "last_utterance": "5-7 ngày? Chắc thôi! Tôi báo ngân hàng và tố cáo lên cơ quan chức năng luôn cho xong. Lừa đảo à?",
+    "context_clues": [
+      "đe dọa báo ngân hàng và tố cáo",
+      "dùng từ 'chắc thôi' thể hiện sự bất mãn",
+      "buộc tội 'lừa đảo'"
+    ],
+    "region": "nam",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em thấy chị phản ánh tai nghe bị rè. Chị đã thử reset lại chưa ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Thử hết trơn rồi. Mới mua 3 ngày đã hỏng."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ nếu vậy chị có thể gửi sản phẩm về để bên em kiểm tra và bảo hành ạ. Thời gian ước tính 2-3 tuần."
+      },
+      {
+        "role": "customer",
+        "text": "2-3 tuần? Tôi cần dùng gấp. Bán đồ lỗi cho khách xong bắt chờ cả tháng à?"
+      },
+      {
+        "role": "agent",
+        "text": "Em rất tiếc vì sự bất tiện này. Bên em sẽ cố gắng xử lý sớm nhất có thể."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi ko chấp nhận. Lần đầu mà cũng lần cuối luôn. Tôi sẽ quay video unbox sản phẩm lỗi và đăng tiktok cho cả xóm biết."
+      }
+    ],
+    "label": "angry",
+    "last_utterance": "Tôi ko chấp nhận. Lần đầu mà cũng lần cuối luôn. Tôi sẽ quay video unbox sản phẩm lỗi và đăng tiktok cho cả xóm biết.",
+    "context_clues": [
+      "đe dọa quay video và đăng tiktok",
+      "câu 'lần đầu mà cũng lần cuối luôn'",
+      "từ ngữ phủ định mạnh 'ko chấp nhận'"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em hỗ trợ anh về tài khoản. Anh gặp vấn đề gì ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tài khoản tôi tự nhiên bị khóa. Đang định mua đồ thì đăng nhập ko dc."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ có thể do anh nhập sai mật khẩu nhiều lần. Anh thử lấy lại mật khẩu qua email nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi đã thử rồi. Ko nhận dc mail reset nào hết."
+      },
+      {
+        "role": "agent",
+        "text": "Vậy anh cho em xin email đăng ký, em kiểm tra hệ thống giúp anh."
+      },
+      {
+        "role": "customer",
+        "text": "Hết trơn! Tôi mệt mỏi với cái dịch vụ này rồi. Yêu cầu mở khóa ngay, ko thì tôi khiếu nại lên Sở Công Thương."
+      }
+    ],
+    "label": "angry",
+    "last_utterance": "Hết trơn! Tôi mệt mỏi với cái dịch vụ này rồi. Yêu cầu mở khóa ngay, ko thì tôi khiếu nại lên Sở Công Thương.",
+    "context_clues": [
+      "đe dọa khiếu nại lên Sở Công Thương",
+      "dùng từ 'hết trơn' thể hiện sự bực dọc",
+      "yêu cầu mạnh 'mở khóa ngay'"
+    ],
+    "region": "nam",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em thấy chị hủy đơn #9101. Chị có thể cho em biết lý do không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi hủy vì shop hứa freeship nhưng checkout vẫn tính phí. Lừa đảo hả?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ chương trình freeship áp dụng cho đơn từ 500k, đơn của chị 450k nên chưa đủ điều kiện ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Trên web ghi freeship toàn quốc, có thấy ghi điều kiện đâu. Giỡn mặt khách à?"
+      },
+      {
+        "role": "agent",
+        "text": "Em xin lỗi nếu thông tin chưa rõ ràng. Em sẽ phản ánh lại đội ngũ kỹ thuật."
+      },
+      {
+        "role": "customer",
+        "text": "Phản ánh cái gì. Tôi sẽ chụp màn hình và post lên group mua sắm cho mn biết shop lừa freeship."
+      }
+    ],
+    "label": "angry",
+    "last_utterance": "Phản ánh cái gì. Tôi sẽ chụp màn hình và post lên group mua sắm cho mn biết shop lừa freeship.",
+    "context_clues": [
+      "đe dọa chụp màn hình và post lên group",
+      "buộc tội 'lừa freeship'",
+      "câu mỉa mai 'phản ánh cái gì'"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em thấy anh có phản ánh giao hàng sai địa chỉ. Anh cho em xin địa chỉ nhận hàng thực tế nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi ghi rõ địa chỉ công ty, shipper lại giao về nhà. Giờ ko có ai nhận."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ em xin lỗi. Anh cho em số điện thoại shipper để em liên hệ xác nhận lại địa chỉ ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Ship xong rồi mới hỏi? Hàng giờ nằm ở cổng nhà tôi, mất ai chịu?"
+      },
+      {
+        "role": "agent",
+        "text": "Bên em sẽ yêu cầu shipper quay lại lấy và giao lại cho anh. Nhưng có thể đến chiều nay ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Thôi kệ đi quá! Tôi cần hàng gấp mà. Làm ăn kiểu gì vậy? Tôi đòi bồi thường và đăng review 1 sao ngay."
+      }
+    ],
+    "label": "angry",
+    "last_utterance": "Thôi kệ đi quá! Tôi cần hàng gấp mà. Làm ăn kiểu gì vậy? Tôi đòi bồi thường và đăng review 1 sao ngay.",
+    "context_clues": [
+      "đe dọa đòi bồi thường và đăng review 1 sao",
+      "dùng từ 'thôi kệ đi quá'",
+      "chỉ trích 'làm ăn kiểu gì vậy'"
+    ],
+    "region": "nam",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em thấy chị yêu cầu hoàn tiền sản phẩm lỗi. Chị đã gửi hàng về chưa ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Gửi từ 5 ngày trước rồi. Giờ vẫn chưa thấy hoàn tiền."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ em kiểm tra thấy bên em đã nhận hàng, đang chờ bộ phận kế toán duyệt hoàn tiền ạ. Tầm 3-5 ngày nữa."
+      },
+      {
+        "role": "customer",
+        "text": "Lúc nào cũng 3-5 ngày. Kéo dài thời gian à? Tôi cần tiền đó."
+      },
+      {
+        "role": "agent",
+        "text": "Em xin lỗi vì sự chậm trễ. Em sẽ đốc thúc bộ phận liên quan."
+      },
+      {
+        "role": "customer",
+        "text": "Đốc thúc cái gì. Tôi sẽ báo cáo lên các trang người tiêu dùng và kiện công ty vì cố tình chiếm dụng tiền."
+      }
+    ],
+    "label": "angry",
+    "last_utterance": "Đốc thúc cái gì. Tôi sẽ báo cáo lên các trang người tiêu dùng và kiện công ty vì cố tình chiếm dụng tiền.",
+    "context_clues": [
+      "đe dọa báo cáo lên trang người tiêu dùng và kiện",
+      "buộc tội 'cố tình chiếm dụng tiền'",
+      "câu mỉa mai 'đốc thúc cái gì'"
+    ],
+    "region": "chung",
+    "difficulty": "hard"
+  }
+]

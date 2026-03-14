@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>UML — Component & Sequence | EmotionAI Lambda</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:      #080f1a;
+  --card:    #0f1c2e;
+  --card2:   #0d1a2a;
+  --border:  #1e3048;
+  --txt:     #e2eaf6;
+  --muted:   #6b84a3;
+  --primary: #38bdf8;
+  --accent:  #a78bfa;
+  --green:   #34d399;
+  --yellow:  #fbbf24;
+  --red:     #f87171;
+  --orange:  #fb923c;
+  --font:    'Be Vietnam Pro', sans-serif;
+}
+* { box-sizing: border-box; margin:0; padding:0; }
+html, body { height:100%; }
+body { font-family: var(--font); background: var(--bg); color: var(--txt); }
+
+/* ── TOP NAV ── */
+.topnav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(8,15,26,.95);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 52px;
+}
+.brand {
+  font-size: 15px; font-weight: 700;
+  color: var(--txt);
+  margin-right: 32px;
+  white-space: nowrap;
+}
+.brand em { color: var(--primary); font-style: normal; }
+.tab {
+  height: 52px;
+  padding: 0 20px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all .18s;
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 7px;
+}
+.tab:hover  { color: var(--txt); }
+.tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.spacer { flex: 1; }
+.version {
+  font-size: 11px; padding: 3px 10px; border-radius: 20px;
+  background: #0a2540; color: var(--primary);
+  border: 1px solid #1a4a80;
+  font-weight: 600;
+}
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── SECTION HEADER ── */
+.section-wrap { max-width: 1300px; margin: 0 auto; padding: 32px 40px 60px; }
+.sec-head {
+  margin-bottom: 24px;
+}
+.sec-title {
+  font-size: 22px; font-weight: 700; color: var(--txt);
+  margin-bottom: 6px;
+}
+.sec-sub { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ── DIAGRAM CARD ── */
+.dcard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+.dcard-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card2);
+}
+.dcard-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.dcard-title { font-size: 14px; font-weight: 700; }
+.dcard-desc  { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.dcard-body  { padding: 32px; overflow-x: auto; }
+.dcard-body .mermaid { display: flex; justify-content: center; min-width: 600px; }
+
+/* ── LEGEND ── */
+.legend {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex; flex-wrap: wrap; gap: 16px;
+  background: var(--card2);
+}
+.leg { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); }
+.leg-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+/* ── NOTE BOX ── */
+.note-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+.note-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  border-left: 3px solid;
+}
+.note-box.blue   { border-left-color: var(--primary); }
+.note-box.purple { border-left-color: var(--accent); }
+.note-box.green  { border-left-color: var(--green); }
+.note-box.yellow { border-left-color: var(--yellow); }
+.note-box.red    { border-left-color: var(--red); }
+.note-box.orange { border-left-color: var(--orange); }
+.note-label { font-size: 10px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; margin-bottom: 6px; }
+.note-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.note-text  { font-size: 12px; color: var(--muted); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="brand">Emotion<em>AI</em> — UML</div>
+  <button class="tab active" onclick="showTab('component', this)">🏗️ Component Diagram</button>
+  <button class="tab" onclick="showTab('sequence', this)">⚡ Sequence Diagram</button>
+  <div class="spacer"></div>
+  <span class="version">Lambda Architecture v2.0</span>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════
+     PAGE: COMPONENT
+══════════════════════════════════════════════ -->
+<div class="page active" id="page-component">
+<div class="section-wrap">
+
+  <div class="sec-head">
+    <div class="sec-title">🏗️ Component Diagram</div>
+    <div class="sec-sub">
+      Toàn bộ các thành phần hệ thống, phân tầng theo Lambda Architecture.
+      Mỗi màu đại diện cho 1 layer — các mũi tên thể hiện quan hệ phụ thuộc và luồng dữ liệu.
+    </div>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="note-grid" style="grid-template-columns: repeat(4,1fr)">
+    <div class="note-box blue">
+      <div class="note-label" style="color:var(--primary)">Client Layer</div>
+      <div class="note-title">Frontend</div>
+      <div class="note-text">Chat widget + Admin dashboard. HTML + Bootstrap + Chart.js</div>
+    </div>
+    <div class="note-box green">
+      <div class="note-label" style="color:var(--green)">API Layer</div>
+      <div class="note-title">FastAPI :8005</div>
+      <div class="note-text">Điều phối toàn bộ — nhận request, gọi tools, ghi DB</div>
+    </div>
+    <div class="note-box red">
+      <div class="note-label" style="color:var(--red)">Speed Layer</div>
+      <div class="note-title">In-memory State</div>
+      <div class="note-text">Realtime counters, alert queue, recent feed — không cần Kafka ở giai đoạn này</div>
+    </div>
+    <div class="note-box purple">
+      <div class="note-label" style="color:var(--accent)">Agentic RAG</div>
+      <div class="note-title">Orchestrator</div>
+      <div class="note-text">5-step pipeline: complexity → tools → retrieval → LLM → reflect</div>
+    </div>
+  </div>
+
+  <!-- DIAGRAM 1: Full Component -->
+  <div class="dcard">
+    <div class="dcard-header">
+      <div class="dcard-icon" style="background:#0a2540">🏗️</div>
+      <div>
+        <div class="dcard-title">Full System — Lambda Architecture Components</div>
+        <div class="dcard-desc">Tất cả thành phần và quan hệ phụ thuộc</div>
+      </div>
+    </div>
+    <div class="dcard-body">
+      <div class="mermaid">
+graph TB
+  subgraph CL["🖥️ CLIENT LAYER"]
+    CW["💬 Chat Widget\nindex.html\nBootstrap 5"]
+    AD["📊 Admin Dashboard\nadmin.html\nChart.js"]
+  end
+
+  subgraph AL["⚙️ API LAYER — FastAPI :8005"]
+    EP_CHAT["/chat\nPOST"]
+    EP_HIST["/history/:id\nGET"]
+    EP_DASH["/dashboard\nGET"]
+    EP_FEED["/feed\nGET"]
+    EP_ALERT["/alerts\nGET"]
+    EP_ORDER["/orders/:id\nGET"]
+  end
+
+  subgraph SPD["⚡ SPEED LAYER — In-Memory"]
+    SL["SpeedLayer\nSingleton"]
+    EC["emotion_counts\ndefaultdict(int)"]
+    AQ["alert_queue\ndeque(100)"]
+    RF["recent_feed\ndeque(50)"]
+    SL --- EC
+    SL --- AQ
+    SL --- RF
+  end
+
+  subgraph SRV["📡 SERVING LAYER"]
+    MERGE["ServingLayer\nmerge()"]
+    BV["batch_views.json\n(pre-computed)"]
+  end
+
+  subgraph RAG["🧠 AGENTIC RAG PIPELINE"]
+    ORC["Orchestrator\norchestrator(turns)"]
+    WM["WorkingMemory\n@dataclass"]
+
+    subgraph TOOLS["🛠️ Tools"]
+      CA["ContextAnalyzer\nneg_signals\nescalation_risk"]
+      SK["SlangLookup\nSLANG_DICT\nphương ngữ Nam"]
+      OLT["OrderLookupTool\nSQL cố định"]
+    end
+
+    subgraph RETR["🔍 Retrieval"]
+      HS["HybridSearch\nRRF Fusion k=60"]
+      VDB["ChromaDB\nVector Store\ncosine+HNSW"]
+      BM25["BM25Okapi\nKeyword Index"]
+    end
+
+    subgraph GEN["💬 Generation"]
+      PB["PromptBuilder\nfew-shot + CoT\n+ RAG block"]
+      LLM["DeepSeek API\nchat / reasoner"]
+      SR["SelfReflect\nretry nếu conf<0.75"]
+    end
+
+    ORC --> WM
+    ORC --> TOOLS
+    ORC --> RETR
+    ORC --> GEN
+    HS --> VDB
+    HS --> BM25
+  end
+
+  subgraph EMBED["🔢 EMBEDDING"]
+    BGE["bge-m3\n1024 dims\nCPU / CUDA"]
+    CACHE[".cache/\nkb_MD5.pkl\nEmbedding cache"]
+    BGE --> CACHE
+  end
+
+  subgraph BATCH["🌙 BATCH LAYER — 02:00 AM"]
+    NJ["NightlyJob\nschedule lib"]
+    AGG["batch_aggregate()\nemotion_dist\nalert_by_hour\nresolution_time"]
+    RI["batch_reindex()\nRe-embed KB\nUpdate ChromaDB"]
+    NJ --> AGG
+    NJ --> RI
+  end
+
+  subgraph STORE["🗄️ STORAGE"]
+    DB[("SQLite\ncskh.db\n8 tables")]
+    KBDATA["data/*.json\n7 nhãn × 20 samples\n= 140 samples KB"]
+  end
+
+  %% Client → API
+  CW -->|"POST /chat"| EP_CHAT
+  CW -->|"GET /history"| EP_HIST
+  AD -->|"GET /dashboard"| EP_DASH
+  AD -->|"GET /feed"| EP_FEED
+  AD -->|"GET /alerts"| EP_ALERT
+  AD -->|"GET /orders"| EP_ORDER
+
+  %% API → tools
+  EP_CHAT -->|"is_order_query?"| OLT
+  EP_CHAT -->|"general query"| LLM
+  EP_CHAT --> ORC
+
+  %% API → speed
+  EP_CHAT --> SL
+
+  %% API → storage
+  EP_CHAT --> DB
+  EP_HIST --> DB
+  EP_ORDER --> DB
+
+  %% Serving
+  EP_DASH --> MERGE
+  EP_FEED --> SL
+  EP_ALERT --> SL
+  MERGE --> SL
+  MERGE --> BV
+
+  %% Batch
+  BATCH --> BV
+  BATCH --> DB
+  RI --> BGE
+  RI --> KBDATA
+  BGE --> VDB
+  CACHE --> VDB
+
+  %% OrderLookup
+  OLT --> DB
+
+  classDef client  fill:#0a1e36,stroke:#38bdf8,color:#93c5fd
+  classDef api     fill:#0a2018,stroke:#22c55e,color:#86efac
+  classDef speed   fill:#2a0f0f,stroke:#ef4444,color:#fca5a5
+  classDef serving fill:#1f1800,stroke:#fbbf24,color:#fde68a
+  classDef rag     fill:#1a0f2e,stroke:#a78bfa,color:#c4b5fd
+  classDef embed   fill:#0f1f1f,stroke:#34d399,color:#6ee7b7
+  classDef batch   fill:#0f0f20,stroke:#6366f1,color:#a5b4fc
+  classDef store   fill:#0f1a0f,stroke:#10b981,color:#6ee7b7
+  classDef tools   fill:#1a1020,stroke:#8b5cf6,color:#c4b5fd
+  classDef gen     fill:#20100a,stroke:#fb923c,color:#fdba74
+
+  class CW,AD client
+  class EP_CHAT,EP_HIST,EP_DASH,EP_FEED,EP_ALERT,EP_ORDER api
+  class SL,EC,AQ,RF speed
+  class MERGE,BV serving
+  class ORC,WM rag
+  class CA,SK,OLT tools
+  class HS,VDB,BM25 rag
+  class PB,LLM,SR gen
+  class BGE,CACHE embed
+  class NJ,AGG,RI batch
+  class DB,KBDATA store
+      </div>
+    </div>
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:#38bdf8"></div>Client Layer</div>
+      <div class="leg"><div class="leg-dot" style="background:#22c55e"></div>API Layer</div>
+      <div class="leg"><div class="leg-dot" style="background:#ef4444"></div>Speed Layer</div>
+      <div class="leg"><div class="leg-dot" style="background:#fbbf24"></div>Serving Layer</div>
+      <div class="leg"><div class="leg-dot" style="background:#a78bfa"></div>Agentic RAG</div>
+      <div class="leg"><div class="leg-dot" style="background:#fb923c"></div>Generation</div>
+      <div class="leg"><div class="leg-dot" style="background:#34d399"></div>Embedding</div>
+      <div class="leg"><div class="leg-dot" style="background:#6366f1"></div>Batch Layer</div>
+      <div class="leg"><div class="leg-dot" style="background:#10b981"></div>Storage</div>
+    </div>
+  </div>
+
+  <!-- DIAGRAM 2: Lambda Layer chỉ -->
+  <div class="dcard">
+    <div class="dcard-header">
+      <div class="dcard-icon" style="background:#1f1800">λ</div>
+      <div>
+        <div class="dcard-title">Lambda Layer Isolation — Batch · Speed · Serving</div>
+        <div class="dcard-desc">Tách biệt rõ 3 layer và quan hệ dữ liệu giữa chúng</div>
+      </div>
+    </div>
+    <div class="dcard-body">
+      <div class="mermaid">
+flowchart LR
+  RAW[("📥 Raw Events\nmessages\nemotions")]
+
+  subgraph B["🌙 BATCH LAYER"]
+    B1["Đọc SQLite\ntoàn bộ lịch sử"]
+    B2["Tính toán\nemotion_dist\nalert_by_hour"]
+    B3["Re-index\nRAG KB"]
+    B4[("batch_views\n.json")]
+    B1 --> B2 --> B4
+    B1 --> B3
+  end
+
+  subgraph S["⚡ SPEED LAYER"]
+    S1["Ingest\nmỗi message"]
+    S2["emotion_counts\n+= 1"]
+    S3["alert_queue\nappend nếu alert"]
+    S4["recent_feed\nappend always"]
+    S1 --> S2
+    S1 --> S3
+    S1 --> S4
+  end
+
+  subgraph SV["📡 SERVING LAYER"]
+    SV1["Batch View\n(đến 2AM)"]
+    SV2["Speed Delta\n(2AM → now)"]
+    SV3["🔀 Merge\nBatch + Speed"]
+    SV1 --> SV3
+    SV2 --> SV3
+  end
+
+  RAW -->|"mỗi đêm 2AM"| B
+  RAW -->|"mỗi tin nhắn\n< 2s"| S
+  B4  --> SV1
+  S2  --> SV2
+  SV3 -->|"GET /dashboard"| OUT1["📊 Admin\nDashboard"]
+  S3  -->|"GET /alerts"| OUT2["🚨 Alert\nAPI"]
+  S4  -->|"GET /feed"| OUT3["📡 Live\nFeed"]
+
+  classDef batch   fill:#0f0f20,stroke:#6366f1,color:#a5b4fc
+  classDef speed   fill:#2a0f0f,stroke:#ef4444,color:#fca5a5
+  classDef serving fill:#1f1800,stroke:#fbbf24,color:#fde68a
+  classDef raw     fill:#0f1a0f,stroke:#475569,color:#94a3b8
+  classDef out     fill:#0a1e36,stroke:#38bdf8,color:#93c5fd
+
+  class B1,B2,B3,B4 batch
+  class S1,S2,S3,S4 speed
+  class SV1,SV2,SV3 serving
+  class RAW raw
+  class OUT1,OUT2,OUT3 out
+      </div>
+    </div>
+  </div>
+
+  <!-- DIAGRAM 3: RAG chi tiết -->
+  <div class="dcard">
+    <div class="dcard-header">
+      <div class="dcard-icon" style="background:#1a0f2e">🧠</div>
+      <div>
+        <div class="dcard-title">Agentic RAG — Internal Components</div>
+        <div class="dcard-desc">Chi tiết bên trong Orchestrator: 5 bước xử lý + Hybrid Search</div>
+      </div>
+    </div>
+    <div class="dcard-body">
+      <div class="mermaid">
+flowchart TD
+  IN["turns[ ]\n(lịch sử hội thoại)"]
+
+  subgraph ORCH["🧠 ORCHESTRATOR"]
+    ST1["① complexity_check()\nn_turns > 4 OR neg ≥ 2\n→ simple / complex"]
+
+    subgraph TOOLBOX["② Tools Execution"]
+      T1["ContextAnalyzer\nneg_signals\nescalation_risk"]
+      T2["SlangLookup\nSLANG_DICT\n'vl','thôi kệ',..."]
+      T3["HybridSearch\ntop_k = 3 (simple)\ntop_k = 5 (complex)"]
+    end
+
+    subgraph HYBRID["🔍 Hybrid Search Detail"]
+      H1["bge-m3\nencode(query)\n1024 dims"]
+      H2["ChromaDB\nvector search\ntop 2K"]
+      H3["BM25Okapi\nkeyword search\ntop 2K"]
+      H4["RRF Fusion\nscore = Σ 1/(60+rank)\nk=60"]
+      H1 --> H2 --> H4
+      H3 --> H4
+    end
+
+    ST2["③ build_prompt()\nconv + rag_block\n+ slang_block\n+ few-shot + CoT"]
+
+    subgraph LLM_BOX["④ LLM Generation"]
+      L1{"complexity?"}
+      L2["deepseek-chat\ntemperature=0.1"]
+      L3["deepseek-reasoner\nchain-of-thought"]
+      L1 -->|simple| L2
+      L1 -->|complex| L3
+    end
+
+    ST3["⑤ self_reflect()\nconf < 0.75\n→ retry max 2x"]
+  end
+
+  OUT["{ emotion, confidence\nreason, alert }"]
+
+  IN --> ST1
+  ST1 --> TOOLBOX
+  T3 --> HYBRID
+  TOOLBOX --> ST2
+  ST2 --> LLM_BOX
+  LLM_BOX --> ST3
+  ST3 -->|conf ≥ 0.75| OUT
+  ST3 -->|conf < 0.75\nattempt 1| L3
+  L3 -->|attempt 2| OUT
+
+  classDef step  fill:#1a0f2e,stroke:#a78bfa,color:#c4b5fd
+  classDef tool  fill:#0f1a1f,stroke:#38bdf8,color:#7dd3fc
+  classDef llm   fill:#20100a,stroke:#fb923c,color:#fdba74
+  classDef io    fill:#0a2018,stroke:#22c55e,color:#86efac
+
+  class ST1,ST2,ST3 step
+  class T1,T2,T3,H1,H2,H3,H4 tool
+  class L1,L2,L3 llm
+  class IN,OUT io
+      </div>
+    </div>
+  </div>
+
+</div>
+</div><!-- /page component -->
+
+
+<!-- ══════════════════════════════════════════════
+     PAGE: SEQUENCE
+══════════════════════════════════════════════ -->
+<div class="page" id="page-sequence">
+<div class="section-wrap">
+
+  <div class="sec-head">
+    <div class="sec-title">⚡ Sequence Diagram</div>
+    <div class="sec-sub">
+      Luồng xử lý từng tin nhắn theo thời gian — từ khi user gửi đến khi nhận response.
+      Hai luồng chính: Order Query (OrderLookupTool) và General Query (Agentic RAG).
+    </div>
+  </div>
+
+  <div class="note-grid">
+    <div class="note-box blue">
+      <div class="note-label" style="color:var(--primary)">Luồng 1</div>
+      <div class="note-title">Order Query</div>
+      <div class="note-text">Detect mã đơn / SĐT → SQL cố định → reply ngay. Không qua RAG. ~200ms</div>
+    </div>
+    <div class="note-box purple">
+      <div class="note-label" style="color:var(--accent)">Luồng 2</div>
+      <div class="note-title">General + Emotion</div>
+      <div class="note-text">DeepSeek chat → reply. Song song: Orchestrator RAG → emotion. ~2s</div>
+    </div>
+    <div class="note-box red">
+      <div class="note-label" style="color:var(--red)">Speed Layer</div>
+      <div class="note-title">Mọi tin nhắn</div>
+      <div class="note-text">Sau mỗi response → ingest vào SpeedLayer. Alert nếu angry/disappointed.</div>
+    </div>
+  </div>
+
+  <!-- DIAGRAM 1: Full sequence -->
+  <div class="dcard">
+    <div class="dcard-header">
+      <div class="dcard-icon" style="background:#0a1e36">⚡</div>
+      <div>
+        <div class="dcard-title">Full Sequence — POST /chat</div>
+        <div class="dcard-desc">Luồng đầy đủ từ User đến Response, bao gồm cả 2 nhánh xử lý</div>
+      </div>
+    </div>
+    <div class="dcard-body" style="padding: 24px 12px">
+      <div class="mermaid">
+sequenceDiagram
+    actor U  as 👤 User
+    participant CW  as 💬 Chat Widget
+    participant API as ⚙️ FastAPI
+    participant DB  as 🗄️ SQLite
+    participant OLT as 📦 OrderLookup
+    participant ORC as 🧠 Orchestrator
+    participant HS  as 🔍 HybridSearch
+    participant LLM as 🤖 DeepSeek
+    participant SL  as ⚡ SpeedLayer
+
+    U  ->> CW  : Nhập tin nhắn & nhấn gửi
+    CW ->> API : POST /chat {message, ticket_id}
+    activate API
+
+    API ->> DB  : get_messages(ticket_id)
+    DB  -->> API: history turns[]
+
+    alt ticket_id = null
+        API ->> DB  : create_ticket()
+        DB  -->> API: new ticket_id
+    end
+
+    API ->> DB  : save_message("customer", message)
+
+    alt is_order_query(message)?
+        Note over API,OLT: 🛒 Luồng 1 — Order Query (~200ms)
+        API ->> OLT : order_lookup(message)
+        OLT ->> OLT : extract_order_id() / extract_phone()
+        OLT ->> DB  : get_order() hoặc get_orders_by_phone()
+        DB  -->> OLT: order data + items + payment
+        OLT -->> API: formatted reply text
+        Note over OLT: emotion = neutral (mặc định)
+    else general query
+        Note over API,LLM: 💬 Luồng 2 — General Query + Emotion (~2s)
+
+        par Reply generation
+            API ->> LLM : chat.completions (history + message)
+            LLM -->> API: reply text
+        and Emotion analysis
+            API ->> ORC : orchestrator(turns)
+            activate ORC
+
+            ORC ->> ORC : complexity_check()
+            Note right of ORC: simple: turns≤4, neg<2\ncomplex: turns>4, neg≥2
+
+            ORC ->> ORC : tool_context_analyzer()
+            ORC ->> ORC : tool_slang_lookup()
+
+            ORC ->> HS  : hybrid_search(query, top_k)
+            activate HS
+            HS  ->> HS  : bge-m3 encode query
+            HS  ->> HS  : ChromaDB vector search
+            HS  ->> HS  : BM25Okapi keyword search
+            HS  ->> HS  : RRF Fusion (k=60)
+            HS  -->> ORC: top_k docs + rrf_scores
+            deactivate HS
+
+            alt complexity = complex
+                ORC ->> HS  : hybrid_search(full_conv, top_k=5)
+                HS  -->> ORC: extra context
+            end
+
+            ORC ->> ORC : build_prompt()\nconv + rag + slang + few-shot + CoT
+
+            ORC ->> LLM : deepseek-chat (simple)
+            LLM -->> ORC: emotion JSON raw
+
+            ORC ->> ORC : parse_result()
+
+            alt confidence < 0.75
+                Note right of ORC: 🔄 Self-reflect: retry
+                ORC ->> LLM : deepseek-reasoner (complex)
+                LLM -->> ORC: emotion JSON retry
+            end
+
+            ORC -->> API: {emotion, confidence, reason, alert}
+            deactivate ORC
+        end
+    end
+
+    API ->> DB  : save_message("bot", reply)
+    API ->> DB  : save_emotion_log(emotion, confidence, alert)
+
+    API ->> SL  : speed_layer.ingest(ticket_id, message, emotion, alert)
+    activate SL
+    SL  ->> SL  : emotion_counts[emotion] += 1
+    SL  ->> SL  : msg_count += 1
+    alt alert = true
+        SL  ->> SL  : alert_queue.appendleft(...)
+        SL  ->> SL  : alert_count += 1
+    end
+    SL  ->> SL  : recent_feed.appendleft(...)
+    deactivate SL
+
+    API -->> CW : {reply, emotion, confidence, alert, ticket_id}
+    deactivate API
+
+    CW  ->> CW  : render bubble + emotion badge
+    alt alert = true
+        CW  ->> CW  : show alert banner 🚨
+    end
+    CW  -->> U  : Hiển thị response
+      </div>
+    </div>
+  </div>
+
+  <!-- DIAGRAM 2: Batch sequence -->
+  <div class="dcard">
+    <div class="dcard-header">
+      <div class="dcard-icon" style="background:#0f0f20">🌙</div>
+      <div>
+        <div class="dcard-title">Batch Layer Sequence — 02:00 AM Nightly Job</div>
+        <div class="dcard-desc">Quy trình chạy tự động mỗi đêm để cập nhật views và re-index RAG</div>
+      </div>
+    </div>
+    <div class="dcard-body" style="padding:24px 12px">
+      <div class="mermaid">
+sequenceDiagram
+    participant SCH as ⏰ Scheduler
+    participant NJ  as 🌙 NightlyJob
+    participant DB  as 🗄️ SQLite
+    participant BGE as 🔢 bge-m3
+    participant VDB as 🗃️ ChromaDB
+    participant FS  as 💾 File System
+
+    Note over SCH: 02:00 AM trigger
+    SCH ->> NJ  : run_batch()
+    activate NJ
+
+    rect rgb(15, 15, 32)
+        Note over NJ,DB: 📊 Job 1: batch_aggregate()
+        NJ  ->> DB  : SELECT emotion, COUNT(*) FROM emotion_logs GROUP BY emotion
+        DB  -->> NJ : emotion distribution
+        NJ  ->> DB  : SELECT hour, SUM(alert) FROM emotion_logs GROUP BY hour
+        DB  -->> NJ : alert by hour
+        NJ  ->> DB  : SELECT AVG(resolution_time) FROM tickets
+        DB  -->> NJ : avg resolution
+        NJ  ->> FS  : write batch_views.json
+        FS  -->> NJ : saved ✓
+    end
+
+    rect rgb(10, 15, 32)
+        Note over NJ,VDB: 🔄 Job 2: batch_reindex()
+        NJ  ->> FS  : compute MD5 hash(data/*.json)
+        FS  -->> NJ : hash = "abc12345"
+        alt cache miss (data changed)
+            NJ  ->> FS  : load data/*.json (7 files × 20 samples)
+            FS  -->> NJ : 140 samples
+            NJ  ->> BGE : encode(all_docs, batch_size=32)
+            BGE -->> NJ : embeddings [140 × 1024]
+            NJ  ->> VDB : delete_collection("emotion_kb")
+            NJ  ->> VDB : create_collection + add(embeddings, docs, metas)
+            VDB -->> NJ : indexed ✓
+            NJ  ->> FS  : save .cache/kb_abc12345.pkl
+        else cache hit (data unchanged)
+            NJ  ->> FS  : load .cache/kb_abc12345.pkl
+            FS  -->> NJ : cached embeddings
+            NJ  ->> VDB : re-index from cache (fast)
+            VDB -->> NJ : indexed ✓
+        end
+    end
+
+    NJ  -->> SCH: batch complete ✓
+    deactivate NJ
+      </div>
+    </div>
+  </div>
+
+  <!-- DIAGRAM 3: Dashboard serving sequence -->
+  <div class="dcard">
+    <div class="dcard-header">
+      <div class="dcard-icon" style="background:#1f1800">📡</div>
+      <div>
+        <div class="dcard-title">Serving Layer Sequence — GET /dashboard</div>
+        <div class="dcard-desc">Admin Dashboard request → Serving Layer merge Batch + Speed → response</div>
+      </div>
+    </div>
+    <div class="dcard-body" style="padding:24px 12px">
+      <div class="mermaid">
+sequenceDiagram
+    actor ADM as 👩‍💼 Admin
+    participant AD  as 📊 Dashboard
+    participant API as ⚙️ FastAPI
+    participant SRV as 📡 ServingLayer
+    participant SL  as ⚡ SpeedLayer
+    participant FS  as 💾 batch_views.json
+
+    ADM ->> AD  : Mở Dashboard / Refresh
+    AD  ->> API : GET /dashboard
+    activate API
+
+    API ->> SRV : get_dashboard_stats()
+    activate SRV
+
+    par Batch data
+        SRV ->> FS  : read batch_views.json
+        FS  -->> SRV: emotion_dist (đến 2AM)\nalert_by_hour\nresolution_time
+    and Speed data
+        SRV ->> SL  : get_stats()
+        SL  -->> SRV: emotion_counts (2AM→now)\nalert_queue\nrecent_feed\nmsg_count
+    end
+
+    SRV ->> SRV : merge(batch.emotion_dist, speed.emotion_counts)
+    Note right of SRV: emotion_total[label] =\nbatch[label] + speed[label]
+
+    SRV -->> API: merged dashboard stats
+    deactivate SRV
+
+    API -->> AD : JSON response
+    deactivate API
+
+    AD  ->> AD  : render Chart.js charts
+    AD  ->> AD  : render alert badges
+    AD  -->> ADM: Dashboard hiển thị
+      </div>
+    </div>
+  </div>
+
+</div>
+</div><!-- /page sequence -->
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'dark',
+  themeVariables: {
+    primaryColor:        '#0f1c2e',
+    primaryTextColor:    '#e2eaf6',
+    primaryBorderColor:  '#1e3a5f',
+    lineColor:           '#4a6080',
+    secondaryColor:      '#0d1a2a',
+    tertiaryColor:       '#080f1a',
+    background:          '#0f1c2e',
+    mainBkg:             '#0f1c2e',
+    nodeBorder:          '#1e3048',
+    clusterBkg:          '#0a1520',
+    titleColor:          '#e2eaf6',
+    edgeLabelBackground: '#0f1c2e',
+    actorBkg:            '#0a1e36',
+    actorBorder:         '#38bdf8',
+    actorTextColor:      '#93c5fd',
+    actorLineColor:      '#4a6080',
+    signalColor:         '#94a3b8',
+    signalTextColor:     '#e2eaf6',
+    labelBoxBkgColor:    '#0a2540',
+    labelBoxBorderColor: '#1e3a5f',
+    labelTextColor:      '#e2eaf6',
+    loopTextColor:       '#e2eaf6',
+    noteBorderColor:     '#1e3a5f',
+    noteBkgColor:        '#0a1e36',
+    noteTextColor:       '#94a3b8',
+    activationBorderColor: '#38bdf8',
+    activationBkgColor:  '#0a2540',
+    sequenceNumberColor: '#e2eaf6',
+    attributeBackgroundColorEven: '#0d1a2a',
+    attributeBackgroundColorOdd:  '#080f1a',
+  },
+  flowchart:  { curve:'basis', padding:24, nodeSpacing:50, rankSpacing:60 },
+  sequence:   { actorMargin:60, messageMargin:25, mirrorActors:false, useMaxWidth:true },
+});
+
+function showTab(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`page-${name}`).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+[
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em hỗ trợ gì được cho anh ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi đặt đơn từ hôm thứ 2, sao giờ thứ 6 rồi vẫn chưa thấy ship vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ để em kiểm tra đơn hàng giúp anh nhé. Anh cho em số điện thoại hoặc mã đơn ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Đây 0987xxx. Kiểm tra nhanh dùm tôi, chờ lâu quá rồi."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ em thấy đơn anh đang ở trạng thái chờ xử lý ạ, có thể do lượng đơn nhiều nên chậm trễ."
+      },
+      {
+        "role": "customer",
+        "text": "Chờ xử lý 4 ngày rồi? Vậy bao giờ mới ship? Hỏi hoài toàn câu xin lỗi thôi."
+      }
+    ],
+    "label": "frustrated",
+    "last_utterance": "Chờ xử lý 4 ngày rồi? Vậy bao giờ mới ship? Hỏi hoài toàn câu xin lỗi thôi.",
+    "context_clues": [
+      "phàn nàn thời gian chờ",
+      "lặp lại vấn đề",
+      "chỉ trích câu trả lời chung chung"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Bên em xin lỗi vì sự bất tiện. Anh có thể cung cấp mã giao dịch không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "GD12345. Tôi chuyển tiền từ sáng mà tài khoản vẫn chưa cộng, làm ăn kiểu gì vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ em kiểm tra thấy giao dịch đang chờ ngân hàng xác nhận ạ. Quy trình có thể mất 24-48h."
+      },
+      {
+        "role": "customer",
+        "text": "24-48h nữa? Lúc đăng ký bảo nạp nhanh 5 phút. Chờ từ sáng tới giờ rồi đó."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ do hôm nay lượng giao dịch lớn nên chậm hơn bình thường, mong anh thông cảm."
+      },
+      {
+        "role": "customer",
+        "text": "Lần nào cũng lý do lượng lớn, chán thật sự. Thôi kệ đi quá, để vậy đi."
+      }
+    ],
+    "label": "frustrated",
+    "last_utterance": "Lần nào cũng lý do lượng lớn, chán thật sự. Thôi kệ đi quá, để vậy đi.",
+    "context_clues": [
+      "dùng từ 'chán'",
+      "phương ngữ Nam 'thôi kệ đi quá'",
+      "bày tỏ sự bất lực"
+    ],
+    "region": "nam",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em có thể giúp gì cho chị?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi gửi yêu cầu đổi size từ hôm qua, sao chưa ai liên hệ vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ bộ phận đổi trả sẽ liên hệ trong 24-48h làm việc chị nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Tức là mai mới có người gọi? Lâu vậy tôi dùng luôn áo sai size cho rồi."
+      },
+      {
+        "role": "agent",
+        "text": "Chị thông cảm, cuối tuần đơn nhiều nên xử lý chậm hơn ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Hết trơn, lúc nào cũng đông. Đợi vậy chắc thôi, đổi làm gì nữa."
+      }
+    ],
+    "label": "frustrated",
+    "last_utterance": "Hết trơn, lúc nào cũng đông. Đợi vậy chắc thôi, đổi làm gì nữa.",
+    "context_clues": [
+      "phương ngữ Nam 'hết trơn', 'chắc thôi'",
+      "đề cập từ bỏ yêu cầu",
+      "giọng điệu buông xuôi"
+    ],
+    "region": "nam",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Xin chào, tôi có thể hỗ trợ gì cho anh?"
+      },
+      {
+        "role": "customer",
+        "text": "Điện thoại mới mua về có vạch màn hình, đòi bảo hành mà bảo do tôi làm vỡ."
+      },
+      {
+        "role": "agent",
+        "text": "Anh có thể gửi ảnh sản phẩm và biên lai mua hàng được không?"
+      },
+      {
+        "role": "customer",
+        "text": "Gửi rồi, họ bảo không đủ bằng chứng. Mới mở hộp ra đã thấy vậy, trời ơi."
+      },
+      {
+        "role": "agent",
+        "text": "Tôi rất tiếc, trung tâm bảo hành đã kết luận lỗi do tác động ngoại lực."
+      },
+      {
+        "role": "customer",
+        "text": "Vậy là tôi chịu thiệt? Dịch vụ bảo hành kiểu này thì ai dám mua nữa."
+      }
+    ],
+    "label": "frustrated",
+    "last_utterance": "Vậy là tôi chịu thiệt? Dịch vụ bảo hành kiểu này thì ai dám mua nữa.",
+    "context_clues": [
+      "câu hỏi tu từ thể hiện bất công",
+      "đe dọa uy tín thương hiệu",
+      "giọng điệu chán nản"
+    ],
+    "region": "chung",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em nghe đây ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi quên mật khẩu, bấm quên mật khẩu gửi mã về mail mà nửa tiếng chưa thấy gì."
+      },
+      {
+        "role": "agent",
+        "text": "Anh kiểm tra hộp thư rác hoặc spam chưa ạ? Có thể email bị delay."
+      },
+      {
+        "role": "customer",
+        "text": "Kiểm tra hết rồi, không có. Gửi lại 3 lần rồi vẫn vậy."
+      },
+      {
+        "role": "agent",
+        "text": "Để em kiểm tra hệ thống gửi mail. Anh dùng mail gì vậy ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Gmail đây. Chờ cả buổi sáng chả làm được gì, mệt mỏi thật sự."
+      }
+    ],
+    "label": "frustrated",
+    "last_utterance": "Gmail đây. Chờ cả buổi sáng chả làm được gì, mệt mỏi thật sự.",
+    "context_clues": [
+      "than phiền thời gian dài",
+      "từ 'mệt mỏi'",
+      "giọng điệu mệt mỏi, bực dọc"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Dạ chào chị, chị cần hỗ trợ gì ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Đơn hàng của tôi báo đã giao nhưng tôi không nhận được, shipper không gọi điện gì cả."
+      },
+      {
+        "role": "agent",
+        "text": "Chị cho em xin mã đơn để em kiểm tra lịch sử giao hàng nhé."
+      },
+      {
+        "role": "customer",
+        "text": "ĐH5678. Tôi ở nhà suốt, chả thấy ai giao, giờ status thành công rồi."
+      },
+      {
+        "role": "agent",
+        "text": "Em thấy shipper xác nhận đã giao và chụp ảnh được ký nhận. Có thể người nhà chị nhận giúp."
+      },
+      {
+        "role": "customer",
+        "text": "Nhà tôi có mỗi 1 mình, ai nhận? Làm việc kiểu này bực mình ghê."
+      }
+    ],
+    "label": "frustrated",
+    "last_utterance": "Nhà tôi có mỗi 1 mình, ai nhận? Làm việc kiểu này bực mình ghê.",
+    "context_clues": [
+      "câu hỏi phủ định mạnh mẽ",
+      "từ 'bực mình'",
+      "chỉ trích cách làm việc"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Alo, anh/chị có yêu cầu gì ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi đặt 2 cái áo, sao chỉ giao 1? Check đơn kỹ chút đi."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ em kiểm tra thấy đơn anh chỉ có 1 sản phẩm, anh xem lại giỏ hàng lúc đặt nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi chắc chắn đặt 2, có ảnh chụp màn hình nè. Sao hệ thống ghi 1 vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Ảnh chụp có thể bị lỗi hiển thị, bên em chỉ căn cứ vào đơn hàng trong hệ thống."
+      },
+      {
+        "role": "customer",
+        "text": "Vậy là lỗi của bên mình mà tôi chịu? Chán quá, lần sau order chỗ khác."
+      }
+    ],
+    "label": "frustrated",
+    "last_utterance": "Vậy là lỗi của bên mình mà tôi chịu? Chán quá, lần sau order chỗ khác.",
+    "context_clues": [
+      "đổ lỗi",
+      "từ 'chán'",
+      "đe dọa chuyển sang đối thủ"
+    ],
+    "region": "chung",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, Shop xin nghe ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Sao đơn tôi tự động hủy vậy? Tôi có hủy đâu."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ do anh không xác nhận đơn trong 24h nên hệ thống tự hủy ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi có nhận được tin nhắn nào đâu? Không thông báo gì cả."
+      },
+      {
+        "role": "agent",
+        "text": "Tin nhắn tự động gửi về số đăng ký rồi anh ạ, có thể anh bỏ qua."
+      },
+      {
+        "role": "customer",
+        "text": "Chắc thôi, đặt lại cũng mệt. Làm ăn kiểu này hên xui quá."
+      }
+    ],
+    "label": "frustrated",
+    "last_utterance": "Chắc thôi, đặt lại cũng mệt. Làm ăn kiểu này hên xui quá.",
+    "context_clues": [
+      "phương ngữ Nam 'chắc thôi'",
+      "từ 'mệt'",
+      "đánh giá tiêu cực 'hên xui'"
+    ],
+    "region": "nam",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Em chào chị, chị cần tra cứu đơn hàng phải không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Ừ, đơn tôi ship tới đâu rồi? Báo 2 ngày nay vẫn đang ở kho."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ đơn chị đang chờ bàn giao cho đơn vị vận chuyển, có thể chậm do thời tiết."
+      },
+      {
+        "role": "customer",
+        "text": "Trời nắng đẹp mà bảo thời tiết? Lý do gì nữa không?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ em xin lỗi, có thể do thiếu nhân sự ạ. Chị đợi thêm 1-2 ngày nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Đợi hoài vậy chứ. Ship lâu vl, lần sau tìm chỗ khác nhanh hơn."
+      }
+    ],
+    "label": "frustrated",
+    "last_utterance": "Đợi hoài vậy chứ. Ship lâu vl, lần sau tìm chỗ khác nhanh hơn.",
+    "context_clues": [
+      "teencode 'vl'",
+      "so sánh với đối thủ",
+      "giọng điệu bất mãn"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Tổng đài XYZ xin nghe, anh/chị gặp vấn đề gì ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi nạp tiền điện thoại qua app 2 tiếng rồi vẫn chưa nhận được, trong khi trừ tiền tk rồi."
+      },
+      {
+        "role": "agent",
+        "text": "Anh vui lòng cung cấp mã giao dịch và số điện thoại cần nạp ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Đây, TD789 và 0912xxx. Làm ơn check nhanh, tôi cần dùng gấp."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ giao dịch đang bị treo, bộ phận kỹ thuật đang xử lý. Anh chờ thêm ít phút nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Ít phút nữa là bao lâu? Chờ từ trưa tới chiều rồi, sốt ruột quá."
+      }
+    ],
+    "label": "frustrated",
+    "last_utterance": "Ít phút nữa là bao lâu? Chờ từ trưa tới chiều rồi, sốt ruột quá.",
+    "context_clues": [
+      "hỏi lại thời gian mơ hồ",
+      "nhấn mạnh thời gian dài",
+      "từ 'sốt ruột'"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  }
+]

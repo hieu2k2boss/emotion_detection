@@ -1,0 +1,368 @@
+[
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em có thể hỗ trợ gì cho anh ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi đặt đơn 2 ngày trước, sao giờ vẫn chưa thấy ship vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ em check giúp anh, đơn anh đang ở trạng thái chờ xử lý ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Chờ gì nữa, tôi cần gấp lắm, sợ hết hàng rồi. Tiền đã trừ rồi mà đơn ko thấy đâu hết trơn."
+      }
+    ],
+    "label": "anxious",
+    "last_utterance": "Chờ gì nữa, tôi cần gấp lắm, sợ hết hàng rồi. Tiền đã trừ rồi mà đơn ko thấy đâu hết trơn.",
+    "context_clues": [
+      "cần gấp lắm",
+      "sợ hết hàng",
+      "tiền đã trừ",
+      "ko thấy đâu hết trơn"
+    ],
+    "region": "nam",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Shop xin lỗi vì sự bất tiện này. Anh cho em xin mã đơn để kiểm tra nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Đơn #AB123. Tôi mới thấy thông báo trừ tiền 2 lần, sao vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ có thể do hệ thống bị lag, em sẽ kiểm tra và phản hồi anh trong 24h ạ."
+      },
+      {
+        "role": "customer",
+        "text": "24h là lâu quá, tôi lo lắm. Tiền tôi có ít, bị trừ 2 lần là hết sạch rồi, xử lý nhanh dùm tôi đi."
+      }
+    ],
+    "label": "anxious",
+    "last_utterance": "24h là lâu quá, tôi lo lắm. Tiền tôi có ít, bị trừ 2 lần là hết sạch rồi, xử lý nhanh dùm tôi đi.",
+    "context_clues": [
+      "lo lắm",
+      "tiền có ít",
+      "bị trừ 2 lần",
+      "hết sạch rồi",
+      "xử lý nhanh"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "customer",
+        "text": "Alo shop ơi, đơn hàng của tui bị hoàn rồi sao?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ vâng, do địa chỉ không chính xác nên đơn bị hoàn ạ. Anh cung cấp lại địa chỉ mới nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Nhưng tôi thấy tiền chưa về tài khoản. Khi nào mới hoàn vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Quy trình hoàn tiền mất 5-7 ngày làm việc anh nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Trời ơi lâu vậy, tôi sợ mất tiền lắm. Có cách nào nhanh hơn ko, tôi cần gấp số tiền đó."
+      }
+    ],
+    "label": "anxious",
+    "last_utterance": "Trời ơi lâu vậy, tôi sợ mất tiền lắm. Có cách nào nhanh hơn ko, tôi cần gấp số tiền đó.",
+    "context_clues": [
+      "sợ mất tiền lắm",
+      "cần gấp số tiền đó",
+      "lâu vậy"
+    ],
+    "region": "nam",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em thấy chị có yêu cầu đổi size giày phải không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Đúng rồi, tôi gửi trả từ hôm qua mà sao chưa thấy shop xác nhận nhận hàng?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ bên em nhận hàng rồi, nhưng cần 1-2 ngày để kiểm tra ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi lo quá, sợ hàng bị thất lạc. Giờ tiền chưa về, hàng mới cũng chưa có, làm sao đây?"
+      }
+    ],
+    "label": "anxious",
+    "last_utterance": "Tôi lo quá, sợ hàng bị thất lạc. Giờ tiền chưa về, hàng mới cũng chưa có, làm sao đây?",
+    "context_clues": [
+      "lo quá",
+      "sợ hàng bị thất lạc",
+      "tiền chưa về",
+      "hàng mới chưa có"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "customer",
+        "text": "Shop ơi, tôi nhận đc hàng nhưng bị hư hết rồi."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ chị chụp hình gửi em xem ạ, bên em sẽ hỗ trợ."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi gửi hình rồi đó. Mà tôi mua để làm quà sinh nhật gấp lắm, giờ hư vậy thì sao?"
+      },
+      {
+        "role": "agent",
+        "text": "Em sẽ đề xuất hoàn tiền hoặc gửi sản phẩm mới cho chị, thời gian khoảng 3 ngày ạ."
+      },
+      {
+        "role": "customer",
+        "text": "3 ngày là trễ mất rồi, tôi lo sốt vó lên đây. Tiền tôi đâu, hàng tôi đâu, xử lý gấp dùm đi."
+      }
+    ],
+    "label": "anxious",
+    "last_utterance": "3 ngày là trễ mất rồi, tôi lo sốt vó lên đây. Tiền tôi đâu, hàng tôi đâu, xử lý gấp dùm đi.",
+    "context_clues": [
+      "lo sốt vó",
+      "trễ mất rồi",
+      "tiền tôi đâu, hàng tôi đâu",
+      "xử lý gấp"
+    ],
+    "region": "bac",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em hỗ trợ gì được cho anh ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi đặt 5 cái áo, sao chỉ nhận có 3? Thiếu 2 cái rồi."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ để em kiểm tra lại đơn hàng và phản hồi anh sau ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Sao cứ phải chờ hoài vậy? Tôi sợ bị lừa đảo mất tiền lắm, check nhanh lên đi."
+      }
+    ],
+    "label": "anxious",
+    "last_utterance": "Sao cứ phải chờ hoài vậy? Tôi sợ bị lừa đảo mất tiền lắm, check nhanh lên đi.",
+    "context_clues": [
+      "sợ bị lừa đảo mất tiền",
+      "check nhanh lên",
+      "chờ hoài"
+    ],
+    "region": "nam",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "customer",
+        "text": "Tài khoản tôi bị khóa đột ngột, sao vậy shop?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ có thể do nghi ngờ bảo mật, anh cung cấp thông tin để em xác minh ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Tôi cung cấp rồi đó. Nhưng trong tài khoản còn tiền, tôi sợ bị mất. Khi nào mở lại?"
+      },
+      {
+        "role": "agent",
+        "text": "Quy trình xác minh mất 48h anh nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Hết 2 ngày nữa á? Tôi lo quá trời, số tiền đó tôi để dành mua đồ cho con. Làm ơn xử lý sớm dùm tôi."
+      }
+    ],
+    "label": "anxious",
+    "last_utterance": "Hết 2 ngày nữa á? Tôi lo quá trời, số tiền đó tôi để dành mua đồ cho con. Làm ơn xử lý sớm dùm tôi.",
+    "context_clues": [
+      "lo quá trời",
+      "số tiền để dành",
+      "xử lý sớm dùm"
+    ],
+    "region": "nam",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, đơn hàng của chị đang trên đường giao ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Nhưng tôi thấy đơn bị delay, ước tính giao từ hôm qua mà?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ do thời tiết xấu nên bị chậm trễ ạ, mong chị thông cảm."
+      },
+      {
+        "role": "customer",
+        "text": "Thông cảm sao được, tôi mua quà cưới gấp lắm. Sợ trễ mất, tiền đã thanh toán rồi, giờ phải làm sao?"
+      }
+    ],
+    "label": "anxious",
+    "last_utterance": "Thông cảm sao được, tôi mua quà cưới gấp lắm. Sợ trễ mất, tiền đã thanh toán rồi, giờ phải làm sao?",
+    "context_clues": [
+      "gấp lắm",
+      "sợ trễ mất",
+      "tiền đã thanh toán rồi"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "customer",
+        "text": "Tôi thanh toán qua ví điện tử nhưng báo lỗi, mà tiền vẫn bị trừ."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ lỗi này do hệ thống, tiền sẽ tự động hoàn trong 24h chị nhé."
+      },
+      {
+        "role": "customer",
+        "text": "24h là lâu lắm, tôi đang cần mua thuốc cho con. Sợ mất tiền lắm, check giúp tôi nhanh đi."
+      }
+    ],
+    "label": "anxious",
+    "last_utterance": "24h là lâu lắm, tôi đang cần mua thuốc cho con. Sợ mất tiền lắm, check giúp tôi nhanh đi.",
+    "context_clues": [
+      "lâu lắm",
+      "cần mua thuốc cho con",
+      "sợ mất tiền",
+      "check nhanh đi"
+    ],
+    "region": "bac",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em thấy anh có đơn đặt trước sản phẩm sắp về ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Ừ, nhưng sao lâu quá vậy? Tôi thấy nhiều người nhận rồi."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ số lượng có hạn nên chia đợt giao anh ạ, đợt của anh tuần sau mới tới."
+      },
+      {
+        "role": "customer",
+        "text": "Tuần sau thì tôi đi công tác mất rồi. Tiền tôi cọc rồi, giờ sợ mất cả tiền lẫn hàng, xử lý thế nào đây?"
+      }
+    ],
+    "label": "anxious",
+    "last_utterance": "Tuần sau thì tôi đi công tác mất rồi. Tiền tôi cọc rồi, giờ sợ mất cả tiền lẫn hàng, xử lý thế nào đây?",
+    "context_clues": [
+      "sợ mất cả tiền lẫn hàng",
+      "tiền cọc rồi",
+      "xử lý thế nào"
+    ],
+    "region": "chung",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "customer",
+        "text": "Shop ơi, tôi nhập mã giảm giá ko dc, báo lỗi."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ mã đó hết hạn rồi chị ạ, chị dùng mã khác nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Nhưng tôi vẫn bấm thanh toán, thấy trừ tiền đầy đủ. Sao vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Để em kiểm tra và hoàn lại phần chênh lệch cho chị sau 3-5 ngày ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Trời ơi, tôi tính toán kỹ để đủ tiền mua, giờ bị trừ thừa thì thiếu mất tiền chi tiêu. Lo quá, làm nhanh dùm tôi đi."
+      }
+    ],
+    "label": "anxious",
+    "last_utterance": "Trời ơi, tôi tính toán kỹ để đủ tiền mua, giờ bị trừ thừa thì thiếu mất tiền chi tiêu. Lo quá, làm nhanh dùm tôi đi.",
+    "context_clues": [
+      "lo quá",
+      "thiếu mất tiền chi tiêu",
+      "làm nhanh dùm"
+    ],
+    "region": "nam",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, sản phẩm chị mua đã hết hàng, em đề xuất đổi sang mẫu khác nhé?"
+      },
+      {
+        "role": "customer",
+        "text": "Tôi chỉ thích mẫu đó thôi. Vậy hoàn tiền cho tôi đi."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ được ạ, bên em sẽ hoàn tiền trong 7 ngày làm việc."
+      },
+      {
+        "role": "customer",
+        "text": "7 ngày? Lâu quá vậy! Tôi cần tiền đó gấp để trả nợ, sợ bị phạt thêm lãi. Có cách nào nhanh hơn ko?"
+      }
+    ],
+    "label": "anxious",
+    "last_utterance": "7 ngày? Lâu quá vậy! Tôi cần tiền đó gấp để trả nợ, sợ bị phạt thêm lãi. Có cách nào nhanh hơn ko?",
+    "context_clues": [
+      "cần tiền gấp để trả nợ",
+      "sợ bị phạt lãi",
+      "lâu quá vậy"
+    ],
+    "region": "chung",
+    "difficulty": "hard"
+  }
+]

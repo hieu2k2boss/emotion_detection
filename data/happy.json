@@ -1,0 +1,350 @@
+[
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em thấy anh có đơn hàng #12345 đặt hôm qua. Em check giúp anh tình trạng nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Dạ vâng, em đang chờ ship nè."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, đơn của anh đã được giao cho đối tác vận chuyển và đang trên đường đến anh rồi ạ. Dự kiến chiều nay sẽ tới."
+      },
+      {
+        "role": "customer",
+        "text": "Trời ơi, ship nhanh dữ vậy! Sáng đặt chiều có. Cảm ơn shop nhiều nha!"
+      }
+    ],
+    "label": "happy",
+    "last_utterance": "Trời ơi, ship nhanh dữ vậy! Sáng đặt chiều có. Cảm ơn shop nhiều nha!",
+    "context_clues": [
+      "khen ngợi tốc độ giao hàng",
+      "cảm ơn"
+    ],
+    "region": "nam",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em hỗ trợ chị về đơn hàng áo thun nhé. Chị nhận được hàng chưa ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Rồi nè, mới nhận hồi sáng."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ vâng, chất vải và form áo có đúng như mô tả không chị?"
+      },
+      {
+        "role": "customer",
+        "text": "Chuẩn luôn á bạn ơi! Đẹp y hình, mặc vô là mê liền. Lần sau ủng hộ tiếp nha shop."
+      }
+    ],
+    "label": "happy",
+    "last_utterance": "Chuẩn luôn á bạn ơi! Đẹp y hình, mặc vô là mê liền. Lần sau ủng hộ tiếp nha shop.",
+    "context_clues": [
+      "khen sản phẩm đẹp",
+      "hứa hẹn mua tiếp"
+    ],
+    "region": "nam",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Xin chào, tôi thấy anh/chị có yêu cầu hoàn tiền cho đơn hàng #67890. Tôi có thể hỗ trợ gì thêm không?"
+      },
+      {
+        "role": "customer",
+        "text": "À, tôi đợi tiền về thôi. Không biết bao lâu nữa?"
+      },
+      {
+        "role": "agent",
+        "text": "Tôi vừa kiểm tra thì thấy bộ phận tài chính đã xử lý xong rồi ạ. Tiền sẽ về tài khoản anh/chị trong 3-5 ngày làm việc."
+      },
+      {
+        "role": "customer",
+        "text": "Ồ, nhanh quá! Tưởng lâu lắm. Cảm ơn bạn đã xử lý nhanh nha, hài lòng ghê."
+      }
+    ],
+    "label": "happy",
+    "last_utterance": "Ồ, nhanh quá! Tưởng lâu lắm. Cảm ơn bạn đã xử lý nhanh nha, hài lòng ghê.",
+    "context_clues": [
+      "khen xử lý nhanh",
+      "thể hiện sự hài lòng"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em thấy anh gọi điện khi nãy. Anh cần hỗ trợ gì ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "À, tôi quên mật khẩu tài khoản. Giờ làm sao lấy lại?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, anh cho em xin email đăng ký, em sẽ gửi link đặt lại mật khẩu cho anh ngay."
+      },
+      {
+        "role": "customer",
+        "text": "Email là abc@gmail.com."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, em đã gửi rồi ạ. Anh check inbox và spam giúp em nhé. Link có hiệu lực trong 1 giờ."
+      },
+      {
+        "role": "customer",
+        "text": "Nhận được rồi, đổi pass xong hết trơn! Hỗ trợ nhanh thiệt, cảm ơn em nha."
+      }
+    ],
+    "label": "happy",
+    "last_utterance": "Nhận được rồi, đổi pass xong hết trơn! Hỗ trợ nhanh thiệt, cảm ơn em nha.",
+    "context_clues": [
+      "dùng từ 'hết trơn'",
+      "khen hỗ trợ nhanh",
+      "cảm ơn"
+    ],
+    "region": "nam",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, bên em thấy chị có phản ánh tai nghe bị lỗi một bên. Chị đã gửi hàng về chưa ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Gửi rồi nè, chắc tới nơi chưa?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, bên em đã nhận được và kiểm tra rồi ạ. Đúng là lỗi từ nhà sản xuất. Em đã đặt gửi sản phẩm mới cho chị, dự kiến mai chị nhận được."
+      },
+      {
+        "role": "customer",
+        "text": "Woa, đổi mới luôn hả? Tưởng sửa chứ. Tuyệt vời quá, cảm ơn shop nhiều lắm!"
+      }
+    ],
+    "label": "happy",
+    "last_utterance": "Woa, đổi mới luôn hả? Tưởng sửa chứ. Tuyệt vời quá, cảm ơn shop nhiều lắm!",
+    "context_clues": [
+      "ngạc nhiên tích cực",
+      "khen ngợi chính sách",
+      "cảm ơn nhiều"
+    ],
+    "region": "chung",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em thấy anh thanh toán đơn #55555 bị lỗi. Anh thử lại chưa ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Thử mấy lần rồi, cứ báo lỗi hoài."
+      },
+      {
+        "role": "agent",
+        "text": "Để em check hệ thống thanh toán giúp anh... À, có vẻ lỗi tạm thời từ ngân hàng anh ạ. Anh thử chuyển sang ví điện tử xem sao?"
+      },
+      {
+        "role": "customer",
+        "text": "Để tôi thử... Ô, được rồi! Cảm ơn bạn gợi ý nha, cuối cùng cũng order thành công. Mừng ghê!"
+      }
+    ],
+    "label": "happy",
+    "last_utterance": "Để tôi thử... Ô, được rồi! Cảm ơn bạn gợi ý nha, cuối cùng cũng order thành công. Mừng ghê!",
+    "context_clues": [
+      "thể hiện niềm vui ('Mừng ghê')",
+      "cảm ơn vì gợi ý hữu ích"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, đơn hàng sách của chị đã được đóng gói và chuẩn bị giao rồi ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Tuyệt quá, hôm nào giao vậy em?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, ngày mai chị nhé. Em đã yêu cầu đối tác giao trong khung sáng cho chị."
+      },
+      {
+        "role": "customer",
+        "text": "Ôi, vậy là đúng lúc mình cần luôn. Cảm ơn em nhiều, làm việc có tâm quá!"
+      }
+    ],
+    "label": "happy",
+    "last_utterance": "Ôi, vậy là đúng lúc mình cần luôn. Cảm ơn em nhiều, làm việc có tâm quá!",
+    "context_clues": [
+      "khen ngợi sự chu đáo ('có tâm')",
+      "cảm ơn"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em thấy anh hủy đơn vì chọn sai size. Anh muốn đặt lại size khác không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Ừ, nhưng sợ hết hàng."
+      },
+      {
+        "role": "agent",
+        "text": "Em check giúp anh... Dạ, size L vẫn còn ạ. Anh đặt lại em ưu tiên xử lý và giữ giá khuyến mãi hôm qua cho anh."
+      },
+      {
+        "role": "customer",
+        "text": "Thiệt hả? Vậy thì tốt quá rồi! Cảm ơn bạn nha, support nhiệt tình dữ!"
+      }
+    ],
+    "label": "happy",
+    "last_utterance": "Thiệt hả? Vậy thì tốt quá rồi! Cảm ơn bạn nha, support nhiệt tình dữ!",
+    "context_clues": [
+      "khen ngợi sự nhiệt tình",
+      "thể hiện sự vui mừng ('tốt quá rồi')"
+    ],
+    "region": "nam",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em thấy chị phản ánh thiếu một món trong đơn hàng combo. Chị cho em xin mã đơn và hình ảnh kiện hàng được không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Đây nè, mã đơn #999, hình chụp đây."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, em đã xác nhận lỗi đóng gói từ kho. Em sẽ gửi bù sản phẩm thiếu ngay cho chị, freeship ạ. Rất xin lỗi vì sự bất tiện này."
+      },
+      {
+        "role": "customer",
+        "text": "Không sao, có khi do đơn đông quá. Mà shop xử lý nhanh và có tâm vậy là mình vui rồi. Cảm ơn nha!"
+      }
+    ],
+    "label": "happy",
+    "last_utterance": "Không sao, có khi do đơn đông quá. Mà shop xử lý nhanh và có tâm vậy là mình vui rồi. Cảm ơn nha!",
+    "context_clues": [
+      "thông cảm",
+      "khen xử lý nhanh và có tâm",
+      "thể hiện sự vui"
+    ],
+    "region": "chung",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, tài khoản của anh đã được xác minh thành công rồi ạ. Giờ anh có thể dùng đầy đủ tính năng."
+      },
+      {
+        "role": "customer",
+        "text": "Ồ, vậy là xong hết rồi hả? Làm nhanh ghê."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ vâng, quy trình tự động nên nhanh anh ạ. Chúc anh có trải nghiệm mua sắm vui vẻ."
+      },
+      {
+        "role": "customer",
+        "text": "Cảm ơn bạn, làm cái là xong liền à. Tiện lợi thiệt!"
+      }
+    ],
+    "label": "happy",
+    "last_utterance": "Cảm ơn bạn, làm cái là xong liền à. Tiện lợi thiệt!",
+    "context_clues": [
+      "khen tốc độ",
+      "khen sự tiện lợi",
+      "cảm ơn"
+    ],
+    "region": "nam",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em thấy chị hỏi về chính sách bảo hành điện thoại. Em giải đáp cho chị nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Ừ, máy mình mua 11 tháng, giờ pin chai quá."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ, sản phẩm của chị vẫn trong thời hạn bảo hành 12 tháng ạ. Chị mang đến trung tâm bảo hành, bên em sẽ thay pin miễn phí cho chị."
+      },
+      {
+        "role": "customer",
+        "text": "Trời, được vậy thì tốt quá! Tưởng phải tốn tiền. Cảm ơn shop nhiều, có bảo hành chu đáo ghê."
+      }
+    ],
+    "label": "happy",
+    "last_utterance": "Trời, được vậy thì tốt quá! Tưởng phải tốn tiền. Cảm ơn shop nhiều, có bảo hành chu đáo ghê.",
+    "context_clues": [
+      "thể hiện sự vui mừng ('tốt quá')",
+      "khen chính sách bảo hành chu đáo"
+    ],
+    "region": "nam",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em thấy anh đặt đơn bàn phím cơ. Anh có cần tư vấn thêm gì không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Mình hỏi thử là có switch màu xanh không?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ có anh ơi, còn hàng ạ. Switch blue clicky, anh thích thì em thêm vào đơn cho anh."
+      },
+      {
+        "role": "customer",
+        "text": "Yes! Tìm mấy chỗ hết hàng rồi. Cảm ơn em, order liền đây. Vui quá!"
+      }
+    ],
+    "label": "happy",
+    "last_utterance": "Yes! Tìm mấy chỗ hết hàng rồi. Cảm ơn em, order liền đây. Vui quá!",
+    "context_clues": [
+      "thể hiện niềm vui ('Vui quá!', 'Yes!')",
+      "cảm ơn"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  }
+]

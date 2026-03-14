@@ -1,0 +1,422 @@
+[
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em thấy đơn hàng #DH456 của chị đang chờ xác nhận thanh toán ạ. Chị có cần hỗ trợ gì không?"
+      },
+      {
+        "role": "customer",
+        "text": "Mình đã chuyển khoản từ sáng rồi mà sao lâu xác nhận vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ để em kiểm tra lại hệ thống ngay. À, hình như chưa thấy giao dịch của chị ạ, chị có thể gửi ảnh biên lai được không?"
+      },
+      {
+        "role": "customer",
+        "text": "Gửi rồi mà vẫn vậy à. Thôi kệ đi, để mình hủy luôn đơn cho xong."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi kệ đi, để mình hủy luôn đơn cho xong.",
+    "context_clues": [
+      "từ bỏ giao dịch",
+      "thể hiện sự mệt mỏi"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em check thấy đơn hàng áo thun của anh đã được giao hôm qua rồi ạ. Anh đã nhận được chưa?"
+      },
+      {
+        "role": "customer",
+        "text": "Nhận rồi, nhưng mà size bị nhỏ hơn so với mình đặt. Giờ làm sao?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ anh có thể đổi hàng trong vòng 7 ngày ạ. Anh gửi lại sản phẩm và phí ship đổi là 20k nhé."
+      },
+      {
+        "role": "customer",
+        "text": "20k nữa hả? Thôi được rồi, mình giữ đại vậy."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi được rồi, mình giữ đại vậy.",
+    "context_clues": [
+      "chấp nhận tình huống không như ý",
+      "không muốn tiếp tục quy trình"
+    ],
+    "region": "nam",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em thấy chị có phản ánh tai nghe bị rè. Chị có thể mô tả kỹ hơn được không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Mới mua có 2 ngày, nghe nhạc cứ bị lẹt xẹt, chán quá."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ chị thử reset lại thiết bị xem sao ạ? Nếu không được bên em sẽ hỗ trợ bảo hành."
+      },
+      {
+        "role": "customer",
+        "text": "Reset rồi, vẫn vậy. Thôi kệ đi quá, coi như mình xui vậy."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi kệ đi quá, coi như mình xui vậy.",
+    "context_clues": [
+      "từ bỏ giải quyết",
+      "đổ lỗi cho số phận"
+    ],
+    "region": "nam",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, tài khoản của anh bị khóa do nghi ngờ bảo mật. Anh cần xác minh CMND để mở lại ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Sao tự nhiên khóa vậy? Mình dùng bình thường mà."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ hệ thống phát hiện hoạt động bất thường ạ. Anh chụp ảnh CMND 2 mặt gửi qua email giúp em."
+      },
+      {
+        "role": "customer",
+        "text": "Rắc rối quá. Thôi chắc mình không dùng nữa đâu."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi chắc mình không dùng nữa đâu.",
+    "context_clues": [
+      "từ bỏ dịch vụ",
+      "thể hiện ý định rời đi"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, đơn hàng #DH789 của chị đang trên đường giao, dự kiến chiều nay tới ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Hôm qua bảo sáng nay giao, giờ lại chiều. Mình cần gấp lắm."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ do tắc đường nên shipper delay chút ạ. Chị thông cảm giúp bên em."
+      },
+      {
+        "role": "customer",
+        "text": "Ừ thôi kệ đi, lần sau chắc order chỗ khác vậy."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Ừ thôi kệ đi, lần sau chắc order chỗ khác vậy.",
+    "context_clues": [
+      "chấp nhận nhưng không hài lòng",
+      "đe dọa chuyển sang đối thủ"
+    ],
+    "region": "nam",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, sản phẩm máy tính bảng anh mua đang có chương trình giảm giá 10% nếu anh mua thêm phụ kiện ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Mình mua xong rồi mới giảm giá à? Vậy có được hoàn tiền chênh lệch không?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ chương trình áp dụng cho đơn hàng mới thôi anh ạ, đơn cũ không áp dụng được."
+      },
+      {
+        "role": "customer",
+        "text": "Thôi được rồi cảm ơn, lần sau mình sẽ cân nhắc."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi được rồi cảm ơn, lần sau mình sẽ cân nhắc.",
+    "context_clues": [
+      "kết thúc cuộc trò chuyện lịch sự nhưng không hài lòng",
+      "hàm ý đe dọa ngầm"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em check thấy chị đặt 2 sản phẩm nhưng chỉ còn 1 cái. Chị có muốn đợi hàng về không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Hết hàng sao không thông báo sớm? Mình cần cả 2 cái."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ em xin lỗi, hệ thống cập nhật chậm. Chị đợi 3-5 ngày nữa hàng về nha."
+      },
+      {
+        "role": "customer",
+        "text": "Thôi chắc thôi, mình hủy luôn đơn vậy."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi chắc thôi, mình hủy luôn đơn vậy.",
+    "context_clues": [
+      "từ bỏ mua hàng",
+      "dùng từ 'chắc thôi' đặc trưng miền Nam"
+    ],
+    "region": "nam",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, em thấy anh có yêu cầu đổi màu áo từ đen sang trắng. Anh vui lòng ra bưu cục gửi lại hàng nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Mình ở xa bưu cục lắm, shop không hỗ trợ đổi tận nơi à?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ hiện tại bên em chưa có dịch vụ đổi hàng tận nơi ạ, mong anh thông cảm."
+      },
+      {
+        "role": "customer",
+        "text": "Thôi kệ, mình mặc đại vậy, đỡ phiền."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi kệ, mình mặc đại vậy, đỡ phiền.",
+    "context_clues": [
+      "chấp nhận sản phẩm không ưng",
+      "từ 'đại' thể hiện sự miễn cưỡng"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, điểm tích lũy của chị sắp hết hạn, chị muốn đổi voucher không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Mình có mấy trăm điểm, đổi được gì không?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ hiện tại điểm của chị đổi được voucher 10k cho đơn từ 500k ạ."
+      },
+      {
+        "role": "customer",
+        "text": "10k thôi à? Thôi để nó hết hạn luôn đi."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi để nó hết hạn luôn đi.",
+    "context_clues": [
+      "từ bỏ lợi ích nhỏ",
+      "thể hiện sự không quan tâm"
+    ],
+    "region": "chung",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, đơn hàng đồng hồ của anh bị hoãn do nhà sản xuất delay. Anh đợi thêm 1 tuần được không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Lần thứ 2 delay rồi, mình cần làm quà sinh nhật mà."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ em xin lỗi anh, bên em sẽ tặng anh voucher 50k cho lần mua sau."
+      },
+      {
+        "role": "customer",
+        "text": "Thôi không cần đâu, lần sau chắc không mua nữa quá."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi không cần đâu, lần sau chắc không mua nữa quá.",
+    "context_clues": [
+      "từ chối đền bù",
+      "tuyên bố không mua lại"
+    ],
+    "region": "nam",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, sản phẩm son của chị bị lỗi, bên em sẽ gửi mới. Chị vui lòng cung cấp địa chỉ lại giúp em."
+      },
+      {
+        "role": "customer",
+        "text": "Mình gửi địa chỉ 2 lần rồi mà vẫn hỏi lại vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ do hệ thống lỗi nên mất dữ liệu, chị thông cảm giúp em."
+      },
+      {
+        "role": "customer",
+        "text": "Thôi được rồi, gửi đi nha, mệt quá."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi được rồi, gửi đi nha, mệt quá.",
+    "context_clues": [
+      "thể hiện sự mệt mỏi",
+      "chấp nhận trong miễn cưỡng"
+    ],
+    "region": "chung",
+    "difficulty": "easy"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, phí ship đơn hàng của anh tăng do vùng xa. Anh xác nhận đồng ý với phí mới nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Lúc đặt báo 20k, giờ thành 50k. Cao quá vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Dạ do bên vận chuyển điều chỉnh giá, em xin lỗi anh."
+      },
+      {
+        "role": "customer",
+        "text": "Thôi kệ đi, hủy đơn giùm mình."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi kệ đi, hủy đơn giùm mình.",
+    "context_clues": [
+      "yêu cầu hủy đơn",
+      "thể hiện sự bất cần"
+    ],
+    "region": "nam",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, em thấy chị thanh toán thất bại 3 lần. Chị kiểm tra lại số dư thẻ nhé."
+      },
+      {
+        "role": "customer",
+        "text": "Thẻ mình vẫn bình thường, sao lỗi hoài vậy?"
+      },
+      {
+        "role": "agent",
+        "text": "Có thể do ngân hàng chị đang bảo trì, chị thử lại sau 1 tiếng nha."
+      },
+      {
+        "role": "customer",
+        "text": "Thôi chắc mình mua chỗ khác, cảm ơn."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi chắc mình mua chỗ khác, cảm ơn.",
+    "context_clues": [
+      "từ bỏ giao dịch",
+      "chuyển sang đối thủ"
+    ],
+    "region": "nam",
+    "difficulty": "hard"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào anh, sản phẩm tai nghe anh mua hết bảo hành rồi, nếu sửa anh chịu phí 200k ạ."
+      },
+      {
+        "role": "customer",
+        "text": "Mua có 4 tháng mà hết bh? Trên web ghi 1 năm mà."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ phụ kiện chỉ bh 3 tháng thôi anh, em xin lỗi vì thông tin chưa rõ."
+      },
+      {
+        "role": "customer",
+        "text": "Thôi bỏ đi, mình vứt luôn cho xong."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Thôi bỏ đi, mình vứt luôn cho xong.",
+    "context_clues": [
+      "từ bỏ sửa chữa",
+      "thể hiện sự bực bội"
+    ],
+    "region": "chung",
+    "difficulty": "medium"
+  },
+  {
+    "turns": [
+      {
+        "role": "agent",
+        "text": "Chào chị, đơn hàng quần jeans của chị đã giao thành công. Chị có hài lòng với sản phẩm không ạ?"
+      },
+      {
+        "role": "customer",
+        "text": "Chất vải mỏng hơn trong hình, mình không ưng lắm."
+      },
+      {
+        "role": "agent",
+        "text": "Dạ sản phẩm đúng mẫu mã chị đặt ạ, có thể do ánh sáng chụp hình."
+      },
+      {
+        "role": "customer",
+        "text": "Ừ thôi kệ, lần sau mình xem kỹ hơn vậy."
+      }
+    ],
+    "label": "disappointed",
+    "last_utterance": "Ừ thôi kệ, lần sau mình xem kỹ hơn vậy.",
+    "context_clues": [
+      "chấp nhận sự thật",
+      "hàm ý tự trách bản thân"
+    ],
+    "region": "nam",
+    "difficulty": "easy"
+  }
+]
