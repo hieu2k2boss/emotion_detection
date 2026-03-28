@@ -154,15 +154,15 @@ Các kỹ thuật prompt engineering áp dụng trong Agentic RAG:
 
 | Kỹ thuật | Trạng thái | Mô tả |
 |---|---|---|
-| System Prompt Design | ✅ | Role + ràng buộc + output format |
-| Few-shot Prompting | ✅ | 5 hard cases (lịch sự giả, phương ngữ) |
-| Chain of Thought | ✅ | 5 bước suy luận cho complex cases |
-| Instruction Hierarchy | ✅ | Priority 1→4 (Safety > Task > Style > Format) |
-| Negative Prompting | ✅ | Liệt kê rõ KHÔNG làm gì |
-| Sliding Window | ✅ | Giữ 6 turns cuối |
-| Summarize Middle | ✅ | DeepSeek/google/gemma-3-4b-it tóm tắt turns giữa |
-| Smart Truncate | ✅ | Token counting + cắt dần |
-| Retrieval Compression | ✅ | Chỉ lấy context_clues liên quan |
+| System Prompt Design |  | Role + ràng buộc + output format |
+| Few-shot Prompting |  | 5 hard cases (lịch sự giả, phương ngữ) |
+| Chain of Thought |  | 5 bước suy luận cho complex cases |
+| Instruction Hierarchy |  | Priority 1→4 (Safety > Task > Style > Format) |
+| Negative Prompting |  | Liệt kê rõ KHÔNG làm gì |
+| Sliding Window |  | Giữ 6 turns cuối |
+| Summarize Middle |  | DeepSeek/google/gemma-3-4b-it tóm tắt turns giữa |
+| Smart Truncate |  | Token counting + cắt dần |
+| Retrieval Compression |  | Chỉ lấy context_clues liên quan |
 | Persona Calibration | ⬜ | Tune tone theo emotion (TODO) |
 | Dynamic Context Injection | ⬜ | VIP, emotion trend (TODO) |
 | LLMLingua | ⬜ | Khi turns > 30 (TODO) |

@@ -160,7 +160,7 @@ def init_db():
 
     conn.commit()
     conn.close()
-    print(f"✅ DB initialized: {Path(DB_PATH).resolve()}")
+    print(f" DB initialized: {Path(DB_PATH).resolve()}")
 
 init_db()
 
@@ -255,7 +255,7 @@ def seed_db():
 
     conn.commit()
     conn.close()
-    print("✅ Seeded mock data")
+    print(" Seeded mock data")
 
 seed_db()
 

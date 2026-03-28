@@ -69,7 +69,7 @@ async def lifespan(app: FastAPI):
     print("⬇️  Loading model...")
     model_path = hf_hub_download(repo_id=MODEL_REPO, filename=MODEL_FILE)
     llm = Llama(model_path=model_path, n_ctx=N_CTX, n_threads=N_THREADS, verbose=False)
-    print("✅ Model loaded! Server sẵn sàng.\n")
+    print(" Model loaded! Server sẵn sàng.\n")
 
     # Khởi động worker xử lý queue
     worker_task = asyncio.create_task(queue_worker())

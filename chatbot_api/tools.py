@@ -18,7 +18,7 @@ SHIP_ONLY = ["ship lâu", "giao lâu", "chờ lâu", "chưa thấy hàng"]
 
 STATUS_MAP = {
     "pending":    {"label": "Chờ xác nhận", "icon": "⏳"},
-    "confirmed":  {"label": "Đã xác nhận",  "icon": "✅"},
+    "confirmed":  {"label": "Đã xác nhận",  "icon": ""},
     "delivering": {"label": "Đang giao",     "icon": "🚚"},
     "delivered":  {"label": "Đã giao",       "icon": "📦"},
     "cancelled":  {"label": "Đã huỷ",        "icon": "❌"},
@@ -70,7 +70,7 @@ def order_lookup(text: str) -> str:
         if o["status"] == "delivering":
             resp += f"🚚 Shipper   : {o['shipper']}\n📆 Dự kiến  : {o['eta']}\n\nĐang trên đường giao, anh/chị để ý điện thoại nhé! 😊"
         elif o["status"] == "delivered":
-            resp += "\n✅ Đã giao thành công! Nếu có vấn đề em hỗ trợ ngay nhé."
+            resp += "\n Đã giao thành công! Nếu có vấn đề em hỗ trợ ngay nhé."
         elif o["status"] == "pending":
             resp += f"\n⏳ Đang chờ kho xử lý, dự kiến giao {o['eta']}."
         elif o["status"] == "cancelled":

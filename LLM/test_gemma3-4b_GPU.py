@@ -6,8 +6,8 @@ model_id = "google/gemma-3-4b-it"  # full model, không cần GGUF
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
-    torch_dtype=torch.bfloat16,  # ✅ GPU dùng bfloat16, nhẹ hơn float32 2x
-    device_map="cuda"  # ✅ tự động lên GPU
+    torch_dtype=torch.bfloat16,  #  GPU dùng bfloat16, nhẹ hơn float32 2x
+    device_map="cuda"  #  tự động lên GPU
 )
 
 

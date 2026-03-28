@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 
 DB_PATH = "orders.db"
-print(f"✅ SQLite path: {Path(DB_PATH).resolve()}")
+print(f" SQLite path: {Path(DB_PATH).resolve()}")
 
 # ════════════════════════════════════════════════
 # CELL 2 — Tạo Database + Schema
@@ -51,7 +51,7 @@ def init_db():
 
     conn.commit()
     conn.close()
-    print("✅ Database initialized")
+    print(" Database initialized")
 
 init_db()
 
@@ -131,7 +131,7 @@ def seed_db():
 
     conn.commit()
     conn.close()
-    print(f"✅ Seeded {len(MOCK_ORDERS)} orders")
+    print(f" Seeded {len(MOCK_ORDERS)} orders")
 
 seed_db()
 
@@ -204,7 +204,7 @@ class OrderDB:
         """Chuẩn hóa output"""
         STATUS_MAP = {
             "pending":    {"label": "Chờ xác nhận",  "icon": "⏳"},
-            "confirmed":  {"label": "Đã xác nhận",   "icon": "✅"},
+            "confirmed":  {"label": "Đã xác nhận",   "icon": ""},
             "delivering": {"label": "Đang giao",      "icon": "🚚"},
             "delivered":  {"label": "Đã giao",        "icon": "📦"},
             "cancelled":  {"label": "Đã huỷ",         "icon": "❌"},
@@ -321,7 +321,7 @@ def format_response(lookup_result: dict) -> str:
                 f"Đơn đang trên đường, anh/chị để ý điện thoại nhé! 😊"
             )
         elif o["status"] == "delivered":
-            r += "\n✅ Đã giao thành công! Nếu có vấn đề em hỗ trợ ngay nhé."
+            r += "\n Đã giao thành công! Nếu có vấn đề em hỗ trợ ngay nhé."
         elif o["status"] == "pending":
             r += f"\n⏳ Đang chờ kho xử lý, dự kiến giao {o['eta']}."
         elif o["status"] == "cancelled":

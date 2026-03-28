@@ -10,7 +10,7 @@ Xây dựng hệ thống **nhận diện cảm xúc khách hàng** trong hội t
 
 ---
 
-## 2. Những gì đã có (✅ Done)
+## 2. Những gì đã có ( Done)
 
 ### 2.1 Data Pipeline
 - **Generate data** bằng DeepSeek API (`deepseek-chat`)
@@ -136,16 +136,16 @@ GET  /orders/{id}   ← Tra cứu đơn hàng
 | System Prompt Design | ⚠️ Cơ bản | Cần thêm ràng buộc rõ hơn |
 | Few-shot Prompting | ❌ Chưa có | Thêm 5-10 hard cases |
 | Chain of Thought | ❌ Chưa có | Cho complex cases |
-| Sliding Window | ✅ Có | `turns[-6:]` |
-| Summarize Middle | ✅ Có | Dùng DeepSeek tóm tắt |
-| Smart Truncate | ✅ Có | Token counting + cắt dần |
+| Sliding Window |  Có | `turns[-6:]` |
+| Summarize Middle |  Có | Dùng DeepSeek tóm tắt |
+| Smart Truncate |  Có | Token counting + cắt dần |
 | Retrieval Compression | ⚠️ Cơ bản | Chỉ lấy clues liên quan |
 | Persona Calibration | ❌ Chưa có | Tune tone theo emotion |
 | Instruction Hierarchy | ❌ Chưa có | Priority 1→4 |
 | Negative Prompting | ⚠️ Cơ bản | Cần bổ sung |
 | Dynamic Context Injection | ❌ Chưa có | VIP, trend, order info |
 | LLMLingua | ❌ Chưa cài | Nén token level |
-| RRF Fusion | ✅ Có | k=60, Vector + BM25 |
+| RRF Fusion |  Có | k=60, Vector + BM25 |
 | HyDE | ❌ Chưa có | Hypothetical Document Embedding |
 | Query Rewriting | ❌ Chưa có | Viết lại query trước khi search |
 

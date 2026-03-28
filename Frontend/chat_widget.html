@@ -474,7 +474,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-const API_BASE   = "http://127.0.0.1:8005";
+const API_BASE   = "http://127.0.0.1:8000";  // ← đổi thành URL server của bạn nếu dùng ngrok
 let   ticketId   = null;
 
 const EMOTION_META = {
@@ -580,7 +580,7 @@ function updateTicketInfo(tid, emotion) {
   document.getElementById("ticketBadge").textContent = `Ticket #${tid}`;
 }
 
-// ── Send message ─────────────────────────────
+// ── Send message (streaming) ─────────────────
 async function sendMessage() {
   const input = document.getElementById("chatInput");
   const msg   = input.value.trim();
@@ -595,41 +595,48 @@ async function sendMessage() {
   showTyping();
 
   try {
-    const res = await fetch(`${API_BASE}/chat`, {
+    const res = await fetch(`${API_BASE}/chat/stream`, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({ message: msg, ticket_id: ticketId }),
     });
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+
+    // Lấy ticket_id từ header response
+    const tid = res.headers.get("X-Ticket-ID");
+    if (tid) ticketId = parseInt(tid);
 
     removeTyping();
 
-    // Cập nhật emotion badge trên tin nhắn user
-    const userRows = document.querySelectorAll(".msg-row.user");
-    const lastUser = userRows[userRows.length - 1];
-    if (lastUser) {
-      const em = EMOTION_META[data.emotion] || EMOTION_META.neutral;
-      let badge = lastUser.querySelector(".emotion-badge");
-      if (!badge) {
-        const div = document.createElement("div");
-        div.innerHTML = `<span class="emotion-badge ${em.cls}">${em.icon} ${em.label}</span>`;
-        lastUser.querySelector("div").appendChild(div);
-      }
-    }
+    // Tạo bubble bot rỗng, append token dần vào đây
+    const box = document.getElementById("chatMessages");
+    const row = document.createElement("div");
+    row.className = "msg-row bot";
+    const bubbleId = "streamBubble_" + Date.now();
+    row.innerHTML = `
+      <div class="msg-avatar bot">🤖</div>
+      <div>
+        <div class="msg-bubble bot" id="${bubbleId}"></div>
+        <div class="msg-time">${nowTime()}</div>
+      </div>`;
+    box.appendChild(row);
+    box.scrollTop = box.scrollHeight;
 
-    appendMessage("bot", data.reply);
-    updateTicketInfo(data.ticket_id, data.emotion);
+    const bubble  = document.getElementById(bubbleId);
+    const reader  = res.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let fullText  = "";
 
-    if (data.alert) {
-      const box    = document.getElementById("chatMessages");
-      const banner = document.createElement("div");
-      banner.className = "alert-banner";
-      banner.innerHTML = `⚠️ Hệ thống đã ghi nhận — tư vấn viên sẽ liên hệ ngay`;
-      box.appendChild(banner);
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      fullText += decoder.decode(value, { stream: true });
+      bubble.innerHTML = fullText.replace(/\n/g, "<br/>");
       box.scrollTop = box.scrollHeight;
     }
+
+    if (tid) updateTicketInfo(parseInt(tid), "neutral");
 
   } catch (err) {
     removeTyping();

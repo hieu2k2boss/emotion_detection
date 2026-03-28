@@ -1,27 +1,27 @@
 # ════════════════════════════════════════════════
 # chatbot_api/orchestrator.py
 # ════════════════════════════════════════════════
-import json, re
+import json, re, uuid
 from dataclasses import dataclass, field
-from openai import OpenAI
 from chatbot_api.rag import hybrid_search
-
-client = OpenAI(
-    api_key  = "sk-abc",
-    base_url = "https://api.abc.com"
-)
+from chatbot_api.api_client import call_api
 
 SLANG_DICT = {
-    "vl":"rất tệ",    "vcl":"cực kỳ tệ",
-    "ừ thôi":"bỏ cuộc","thôi kệ":"từ bỏ",
-    "bể":"hỏng (Nam)","hết trơn":"hoàn toàn (Nam)",
-    "ko":"không",     "k":"không",
-    "ship":"giao hàng","mn":"mọi người",
+    "vl":       "rất tệ",
+    "vcl":      "cực kỳ tệ",
+    "ừ thôi":   "bỏ cuộc",
+    "thôi kệ":  "từ bỏ",
+    "bể":       "hỏng (Nam)",
+    "hết trơn": "hoàn toàn (Nam)",
+    "ko":       "không",
+    "k":        "không",
+    "ship":     "giao hàng",
+    "mn":       "mọi người",
 }
 NEG_KEYWORDS = [
-    "lâu","mãi","hoài","sao chưa","không thấy",
-    "thôi","kệ","vl","vcl","tức","bực","chán",
-    "lần cuối","không mua","bể","post lên",
+    "lâu", "mãi", "hoài", "sao chưa", "không thấy",
+    "thôi", "kệ", "vl", "vcl", "tức", "bực", "chán",
+    "lần cuối", "không mua", "bể", "post lên",
 ]
 SYSTEM_PROMPT = """You must respond ONLY in Vietnamese.
 Bạn là chuyên gia phân tích cảm xúc CSKH tiếng Việt.
@@ -45,45 +45,33 @@ class WorkingMemory:
     result:          dict = field(default_factory=dict)
     attempts:        int  = 0
 
-# Context
+# ── Context helpers ───────────────────────────
+
 def sliding_window(turns: list, max_turns: int = 6) -> list:
-    """Chỉ giữ N turns cuối — đủ dùng cho CSKH thường"""
     return turns[-max_turns:]
 
 def compress_context(turns: list, keep: int = 4) -> list:
-    """
-    Giữ 2 turns đầu + tóm tắt giữa + 4 turns cuối
-    Không cần thêm thư viện — dùng DeepSeek API có sẵn
-    """
+    """Giữ 2 turns đầu + tóm tắt giữa + 4 turns cuối"""
     if len(turns) <= keep + 2:
-        return turns   # đủ ngắn → giữ nguyên
+        return turns
 
     head   = turns[:2]
     tail   = turns[-keep:]
     middle = turns[2:-keep]
 
-    # Tóm tắt phần giữa bằng DeepSeek
     mid_text = "\n".join([
         f"{'Khách' if t['role']=='customer' else 'Agent'}: {t['text']}"
         for t in middle
     ])
-
-    res = client.chat.completions.create(
-        model    = "deepseek-chat",
-        messages = [{
-            "role": "user",
-            "content": f"Tóm tắt đoạn hội thoại sau thành 1-2 câu, giữ lại cảm xúc chính:\n{mid_text}"
-        }],
-        max_tokens  = 80,
-        temperature = 0.1,
+    prompt = (
+        f"Tóm tắt đoạn hội thoại sau thành 1-2 câu, giữ lại cảm xúc chính:\n{mid_text}"
     )
-    summary = res.choices[0].message.content.strip()
+    try:
+        summary = call_api(prompt, session_id=f"compress-{uuid.uuid4().hex[:8]}")
+    except Exception:
+        summary = "(không tóm tắt được)"
 
-    # Ghép lại
-    return head \
-        + [{"role": "system", "text": f"[Tóm tắt: {summary}]"}] \
-        + tail
-
+    return head + [{"role": "system", "text": f"[Tóm tắt: {summary}]"}] + tail
 
 # ── Tools ─────────────────────────────────────
 
@@ -112,12 +100,14 @@ def build_prompt(mem: WorkingMemory, turns: list) -> str:
         f"- \"{d['last_utterance']}\" → {d['label']} | {d['context_clues']}"
         for d in mem.retrieved_docs
     ]) or "Không có"
-    slang = "\n".join([f"- '{k}' = {v}" for k, v in mem.slang_found.items()]) or "Không có"
+    slang   = "\n".join([f"- '{k}' = {v}" for k, v in mem.slang_found.items()]) or "Không có"
     warning = ""
     if mem.context_summary.get("escalation_risk"):
         warning = f"\n⚠️  {mem.context_summary['neg_signals']} tín hiệu tiêu cực tích lũy!"
 
-    return f"""Hội thoại ({len(turns)} turns):
+    return f"""{SYSTEM_PROMPT}
+
+Hội thoại ({len(turns)} turns):
 {conv}
 
 Ví dụ tương tự từ KB:
@@ -132,18 +122,9 @@ Ngữ cảnh: {mem.context_summary.get('summary', '')}
 Câu cần phân tích: "{mem.query}"
 Chỉ trả về JSON."""
 
-def call_llm(prompt: str, use_reasoner: bool = False) -> str:
-    model = "deepseek-reasoner" if use_reasoner else "deepseek-chat"
-    res   = client.chat.completions.create(
-        model    = model,
-        messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user",   "content": prompt},
-        ],
-        max_tokens  = 300 if use_reasoner else 150,
-        temperature = 0.1,
-    )
-    return res.choices[0].message.content.strip()
+def call_llm(prompt: str, session_id: str = "orchestrator") -> str:
+    """Gọi API phân tích cảm xúc — mỗi lần dùng session riêng biệt để tránh nhiễu ngữ cảnh"""
+    return call_api(prompt, session_id=session_id)
 
 def parse_result(raw: str) -> dict:
     raw = re.sub(r'```json|```', '', raw).strip()
@@ -188,17 +169,19 @@ def orchestrator(turns: list) -> dict:
         mem.retrieved_docs = merged[:4]
 
     # Step 3: Generate + Self-reflect
-    use_reasoner = False
+    # Mỗi lần retry dùng session_id khác nhau để tránh API nhớ context sai
     for attempt in range(1, 3):
         mem.attempts = attempt
+        session_id   = f"emotion-{uuid.uuid4().hex[:12]}"
         prompt       = build_prompt(mem, turns)
-        raw          = call_llm(prompt, use_reasoner=use_reasoner)
+        raw          = call_llm(prompt, session_id=session_id)
         mem.result   = parse_result(raw)
         conf         = mem.result.get("confidence", 0)
 
         if conf >= 0.75:
             break
+        # attempt 2: thêm gợi ý vào prompt thay vì dùng reasoner
         if mem.complexity == "complex" and attempt == 1:
-            use_reasoner = True   # retry với reasoner
+            mem.query = f"[Phân tích kỹ hơn] {mem.query}"
 
     return mem.result

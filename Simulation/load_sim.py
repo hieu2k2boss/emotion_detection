@@ -489,7 +489,7 @@ async def main():
         print("   cd NLP/")
         print("   python -m uvicorn chatbot_api.main:app --port 8005")
         return
-    print("✅ Server OK\n")
+    print(" Server OK\n")
 
     stats = SimStats()
 

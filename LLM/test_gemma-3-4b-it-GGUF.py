@@ -3,12 +3,12 @@ from llama_cpp import Llama
 import time
 
 model_path = hf_hub_download(
-    repo_id="bartowski/google_gemma-3-4b-it-GGUF",       # ✅ thêm google_
-    filename="google_gemma-3-4b-it-Q4_K_M.gguf"          # ✅ thêm google_
+    repo_id="bartowski/google_gemma-3-4b-it-GGUF",       #  thêm google_
+    filename="google_gemma-3-4b-it-Q4_K_M.gguf"          #  thêm google_
 )
 
 llm = Llama(model_path=model_path, n_ctx=4096, n_threads=8, verbose=False)
-print("✅ Model loaded!\n")
+print(" Model loaded!\n")
 
 SYSTEM = "Bạn là trợ lý AI thông minh. Hãy trả lời bằng tiếng Việt, rõ ràng và đầy đủ."
 

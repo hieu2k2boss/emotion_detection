@@ -372,7 +372,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--txt); displ
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-const API  = "http://127.0.0.1:8005";
+const API  = "http://127.0.0.1:8000";
 const PROX = { method: "GET" };
 
 const EM = {
@@ -418,7 +418,7 @@ async function apiFetch(path) {
 async function checkApi() {
   const r = await apiFetch("/");
   const el = document.getElementById("apiStatus");
-  el.textContent = r ? "✅ Online" : "❌ Offline";
+  el.textContent = r ? " Online" : "❌ Offline";
   el.style.color  = r ? "#22c55e" : "#dc2626";
 }
 

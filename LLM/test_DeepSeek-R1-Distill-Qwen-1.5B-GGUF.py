@@ -13,12 +13,12 @@ print("⬇️ Loading model...")
 model_path = hf_hub_download(repo_id=MODEL_REPO, filename=MODEL_FILE)
 
 llm = Llama(model_path=model_path, n_ctx=4096, n_threads=12, verbose=False, n_batch=512)
-print("✅ Done!\n")
+print(" Done!\n")
 
 SYSTEM = "Bạn là trợ lý AI. Hãy trả lời bằng tiếng Việt, đầy đủ và chính xác."
 
 def chat(question: str, max_tokens=512):
-    # ✅ Đúng format Qwen/DeepSeek R1 Distill
+    #  Đúng format Qwen/DeepSeek R1 Distill
     prompt = (
         f"<|im_start|>system\n{SYSTEM}<|im_end|>\n"
         f"<|im_start|>user\n{question}<|im_end|>\n"
