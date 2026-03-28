@@ -6,33 +6,33 @@ SYSTEM_PROMPT = """Bạn là trợ lý CSKH tiếng Việt thân thiện.
 Trả lời ngắn gọn, lịch sự. Không bịa đặt thông tin đơn hàng."""
 
 def chat(user_message: str, history: list, session_id: str = "default") -> tuple[str, dict]:
-    """
-    history:    [{"role":"customer/agent","text":"..."}]
-    session_id: dùng ticket_id để API giữ đúng ngữ cảnh mỗi cuộc hội thoại
-    """
-    # ── OrderLookup (không cần RAG) ─────────────
     if is_order_query(user_message):
         reply   = order_lookup(user_message)
         emotion = {"emotion": "neutral", "confidence": 0.9,
                    "reason": "Hỏi thông tin đơn hàng", "alert": False}
         return reply, emotion
 
-    # ── Ghép system prompt + lịch sử + tin mới ──
     lines = [SYSTEM_PROMPT, ""]
     for m in history[-10:]:
         prefix = "Khách" if m["role"] == "customer" else "Agent"
-        lines.append(f"{prefix}: {m['text']}")
+        # Chỉ lấy 1 dòng đầu, tránh reply bị nhiễm từ lần trước
+        clean_text = m["text"].split("\n")[0].strip()
+
+        lines.append(f"{prefix}: {clean_text}")
     lines.append(f"Khách: {user_message}")
+    lines.append("Agent:")  # ← FIX 1: bắt API điền tiếp, không bịa kịch bản mới
+
     full_message = "\n".join(lines)
 
     try:
-        reply = call_api(full_message, session_id=session_id)
+        raw_reply = call_api(full_message, session_id=session_id)
+        # FIX 2: cắt tại dòng đầu tiên có "Khách:" để loại bỏ phần API tự bịa tiếp
+        reply = raw_reply.split("\nKhách:")[0].split("\nAgent:")[0].strip()
         if not reply:
             reply = "Xin lỗi, em chưa nhận được phản hồi. Anh/chị thử lại sau nhé!"
     except Exception as e:
         reply = "Xin lỗi, em đang gặp sự cố. Anh/chị thử lại sau nhé!"
 
-    # ── Orchestrator RAG phân tích cảm xúc ───────
     turns  = history[-8:] + [{"role": "customer", "text": user_message}]
     emotion = orchestrator(turns)
 

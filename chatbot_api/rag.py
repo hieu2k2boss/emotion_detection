@@ -50,7 +50,7 @@ def build_doc_text(sample: dict) -> str:
     return " | ".join(parts)
 
 
-def load_kb(data_dir: str = "data"):
+def load_kb(data_dir: str = "C:\\Users\\hieu2\\OneDrive\\Máy tính\\NLP\\Github\\emotion_detection\\data"):
     """
     Load data/*.json → so sánh hash → chỉ re-index khi data thay đổi.
     Nếu hash khớp: load BM25 từ disk, dùng ChromaDB đã lưu sẵn.

@@ -121,6 +121,7 @@ async def chat_stream_endpoint(req: ChatRequest):
         prefix = "Khách" if m["role"] == "customer" else "Agent"
         lines.append(f"{prefix}: {m['text']}")
     lines.append(f"Khách: {req.message}")
+    lines.append("Agent:")
     full_message = "\n".join(lines)
 
     async def generate():
@@ -134,6 +135,9 @@ async def chat_stream_endpoint(req: ChatRequest):
         )
         for token in tokens:
             full_reply.append(token)
+            assembled = "".join(full_reply)
+            if "\nKhách:" in assembled:
+                break
             yield token.encode("utf-8")
 
         db.save_message(ticket_id, "bot", "".join(full_reply))
@@ -160,6 +164,24 @@ def get_order(order_id: str):
     result = db.get_order(order_id)
     if not result: raise HTTPException(404, "Order not found")
     return result
+
+# Lấy tất cả tickets (admin)
+@app.get("/admin/tickets")
+def list_tickets():
+    return db.get_all_tickets()  # cần thêm hàm này trong db.py
+
+# Chi tiết 1 ticket: hội thoại + emotion
+@app.get("/admin/tickets/{ticket_id}")
+def ticket_detail(ticket_id: int):
+    return {
+        "messages": db.get_messages(ticket_id),
+        "emotions": db.get_emotions(ticket_id),  # cần thêm hàm này
+    }
+
+# Lọc theo alert hoặc emotion
+@app.get("/admin/alerts")
+def get_alerts():
+    return db.get_alerted_tickets()  # cần thêm hàm này
 
 if __name__ == "__main__":
     import uvicorn
