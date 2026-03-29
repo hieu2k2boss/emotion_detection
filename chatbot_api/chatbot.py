@@ -7,10 +7,15 @@ Trả lời ngắn gọn, lịch sự. Không bịa đặt thông tin đơn hàn
 
 def chat(user_message: str, history: list, session_id: str = "default") -> tuple[str, dict]:
     if is_order_query(user_message):
-        reply   = order_lookup(user_message)
-        emotion = {"emotion": "neutral", "confidence": 0.9,
-                   "reason": "Hỏi thông tin đơn hàng", "alert": False}
-        return reply, emotion
+        reply = order_lookup(user_message)
+        # Vẫn phân tích cảm xúc thật thay vì hardcode neutral
+        turns  = history[-8:] + [{"role": "customer", "text": user_message}]
+        emotion = orchestrator(turns)
+        # Chỉ fallback neutral nếu orchestrator fail
+        if not emotion:
+            emotion = {"emotion": "neutral", "confidence": 0.8,
+                       "reason": "Hỏi thông tin đơn hàng", "alert": False}
+        return reply, emotion 
 
     lines = [SYSTEM_PROMPT, ""]
     for m in history[-10:]:

@@ -1,3 +1,4 @@
+from chatbot_api.orchestrator import orchestrator
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -60,6 +61,7 @@ def chat_endpoint(req: ChatRequest):
     reply, emotion = chat(req.message, history_turns, session_id=str(ticket_id))
 
     db.save_message(ticket_id, "bot", reply)
+    print(f"[DEBUG] ticket={ticket_id} emotion={emotion}")
     db.save_emotion(
         ticket_id  = ticket_id,
         message_id = msg_id,
@@ -81,10 +83,6 @@ def chat_endpoint(req: ChatRequest):
 # ── Chat streaming ────────────────────────────────────────────────────────────
 @app.post("/chat/stream")
 async def chat_stream_endpoint(req: ChatRequest):
-    """
-    Trả về token theo từng chunk (plain text stream).
-    Header X-Ticket-ID chứa ticket_id để client lưu lại dùng lần sau.
-    """
     ticket_id = req.ticket_id or db.create_ticket(None, None, "other")
 
     history = db.get_messages(ticket_id)
@@ -93,12 +91,25 @@ async def chat_stream_endpoint(req: ChatRequest):
          "text": m["content"]}
         for m in history
     ]
-    db.save_message(ticket_id, "customer", req.message)
+    msg_id = db.save_message(ticket_id, "customer", req.message)  # ← lưu msg_id
 
-    # Order query → không cần stream, trả một lần
     if is_order_query(req.message):
         reply = order_lookup(req.message)
         db.save_message(ticket_id, "bot", reply)
+
+        # ── THÊM: save emotion cho order query ──
+        turns  = history_turns[-8:] + [{"role": "customer", "text": req.message}]
+        emotion = orchestrator(turns)
+        if emotion:
+            db.save_emotion(
+                ticket_id  = ticket_id,
+                message_id = msg_id,
+                emotion    = emotion.get("emotion", "neutral"),
+                confidence = emotion.get("confidence", 0.0),
+                reason     = emotion.get("reason", ""),
+                alert      = emotion.get("alert", False),
+            )
+
         async def one_shot():
             yield reply.encode("utf-8")
         return StreamingResponse(
@@ -126,21 +137,58 @@ async def chat_stream_endpoint(req: ChatRequest):
 
     async def generate():
         full_reply = []
-        loop = asyncio.get_event_loop()
+        buffer = ""
 
-        # Generator đồng bộ → chạy trong thread pool, không block event loop
-        tokens = await loop.run_in_executor(
-            None,
-            lambda: list(call_api_stream(full_message, session_id=str(ticket_id)))
-        )
-        for token in tokens:
-            full_reply.append(token)
-            assembled = "".join(full_reply)
-            if "\nKhách:" in assembled:
+        async def stream_tokens():
+            loop = asyncio.get_event_loop()
+            queue = asyncio.Queue()
+
+            def producer():
+                for token in call_api_stream(full_message, session_id=str(ticket_id)):
+                    loop.call_soon_threadsafe(queue.put_nowait, token)
+                loop.call_soon_threadsafe(queue.put_nowait, None)  # sentinel
+
+            loop.run_in_executor(None, producer)
+
+            while True:
+                token = await queue.get()
+                if token is None:
+                    break
+                yield token
+
+        async for token in stream_tokens():
+            buffer += token
+
+            if "Khách:" in buffer:
+                clean = buffer.split("Khách:")[0].strip()
+                if clean:
+                    full_reply.append(clean)
+                    yield clean.encode("utf-8")
                 break
-            yield token.encode("utf-8")
 
-        db.save_message(ticket_id, "bot", "".join(full_reply))
+            if len(buffer) > 20 or token.endswith((".", "!", "?", "\n")):
+                full_reply.append(buffer)
+                yield buffer.encode("utf-8")
+                buffer = ""
+
+        if buffer and "Khách:" not in buffer:
+            full_reply.append(buffer)
+            yield buffer.encode("utf-8")
+
+        bot_reply = "".join(full_reply)
+        db.save_message(ticket_id, "bot", bot_reply)
+
+        turns = history_turns[-8:] + [{"role": "customer", "text": req.message}]
+        emotion = orchestrator(turns)
+        print("emotion", emotion)
+        if emotion:
+            db.save_emotion(
+                ticket_id=ticket_id, message_id=msg_id,
+                emotion=emotion.get("emotion", "neutral"),
+                confidence=emotion.get("confidence", 0.0),
+                reason=emotion.get("reason", ""),
+                alert=emotion.get("alert", False),
+            )
 
     return StreamingResponse(
         generate(),
@@ -165,11 +213,6 @@ def get_order(order_id: str):
     if not result: raise HTTPException(404, "Order not found")
     return result
 
-# Lấy tất cả tickets (admin)
-@app.get("/admin/tickets")
-def list_tickets():
-    return db.get_all_tickets()  # cần thêm hàm này trong db.py
-
 # Chi tiết 1 ticket: hội thoại + emotion
 @app.get("/admin/tickets/{ticket_id}")
 def ticket_detail(ticket_id: int):
@@ -182,6 +225,11 @@ def ticket_detail(ticket_id: int):
 @app.get("/admin/alerts")
 def get_alerts():
     return db.get_alerted_tickets()  # cần thêm hàm này
+
+@app.get("/admin/tickets")
+def admin_tickets():
+    tickets = db.get_all_tickets_with_emotions()
+    return {"tickets": tickets}
 
 if __name__ == "__main__":
     import uvicorn

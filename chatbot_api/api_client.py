@@ -1,7 +1,7 @@
 import requests
 
-API_URL = "https://62b767e7fcb6a2.lhr.life"
-API_KEY = "8ee9961647838b04214f358e2787b237"
+API_URL = "https://2f2e0c7c166331.lhr.life"
+API_KEY = "67ca894cfcf256bc6855b33d97666180"
 
 HEADERS = {
     "x-api-key":    API_KEY,

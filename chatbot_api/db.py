@@ -201,3 +201,48 @@ def get_messages(ticket_id: int) -> list:
     ).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+def get_all_tickets_with_emotions():
+    conn = get_conn()
+    
+    # Query 1: lấy messages (không JOIN emotion để tránh duplicate)
+    msg_rows = conn.execute("""
+        SELECT ticket_id, role, content
+        FROM messages
+        ORDER BY ticket_id, id ASC  -- id ASC = đúng thứ tự từ đầu đến cuối
+    """).fetchall()
+
+    # Query 2: lấy emotion MỚI NHẤT của mỗi ticket
+    em_rows = conn.execute("""
+        SELECT ticket_id, emotion, confidence, alert, reason
+        FROM emotion_logs
+        WHERE id IN (
+            SELECT MAX(id) FROM emotion_logs GROUP BY ticket_id
+        )
+    """).fetchall()
+
+    # Gộp lại
+    tickets = {}
+    for r in msg_rows:
+        tid = r["ticket_id"]
+        if tid not in tickets:
+            tickets[tid] = {"ticket_id": tid, "messages": [],
+                            "emotion": "neutral", "confidence": 0,
+                            "alert": False, "reason": ""}
+        tickets[tid]["messages"].append({
+            "role": r["role"],
+            "content": r["content"]
+        })
+
+    for r in em_rows:
+        tid = r["ticket_id"]
+        if tid in tickets:
+            tickets[tid].update({
+                "emotion":    r["emotion"],
+                "confidence": r["confidence"],
+                "alert":      bool(r["alert"]),
+                "reason":     r["reason"] or "",
+            })
+
+    conn.close()
+    return list(tickets.values())

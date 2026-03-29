@@ -424,11 +424,8 @@ async function checkApi() {
 
 // ── Load dashboard data ─────────────────────
 async function loadDashboard() {
-  // Lấy danh sách tickets từ /tickets endpoint (nếu có) hoặc probe từ /history
-  // Vì API hiện tại chỉ có /history/{id}, ta probe ticket 1..20
-  const promises = Array.from({length:20},(_,i)=>apiFetch(`/history/${i+1}`));
-  const results  = await Promise.all(promises);
-  allTickets     = results.filter(r=>r && r.messages && r.messages.length > 0);
+  const res = await apiFetch("/admin/tickets");
+  allTickets = res ? res.tickets : [];
 
   renderStats();
   renderEmotionChart();
@@ -460,12 +457,11 @@ function renderStats() {
 
 // ── Emotion chart ───────────────────────────
 function getEmotionCounts() {
-  // Đếm từ emotion_logs — hiện tại ta không có endpoint riêng
-  // Dùng mock data để demo UI
-  return {
-    neutral: 12, happy: 18, confused: 5,
-    anxious: 8, frustrated: 11, disappointed: 7, angry: 3,
-  };
+  const counts = {};
+  allTickets.forEach(t => {
+    if (t.emotion) counts[t.emotion] = (counts[t.emotion] || 0) + 1;
+  });
+  return counts;
 }
 
 function renderEmotionChart() {
@@ -523,10 +519,11 @@ function renderEmotionChart() {
 function renderRecentTickets() {
   const emotions = Object.keys(EM);
   const rows = allTickets.slice(0,8).map(t => {
-    const em  = emotions[Math.floor(Math.random()*emotions.length)];
+    const em  = t.emotion || "neutral";
     const e   = EM[em];
-    const conf= (Math.random()*.3+.7).toFixed(2);
-    const alert = em === "angry" || em === "disappointed";
+    const conf= t.confidence || 0;
+    const alert = t.alert || false;
+    const reason = t.reason || "—";
     return `
       <tr onclick="openTicket(${t.ticket_id})" style="cursor:pointer">
         <td><span class="text-primary fw-600">#${t.ticket_id}</span></td>
@@ -545,11 +542,11 @@ function renderRecentTickets() {
 function renderTicketsTable(filter = {}) {
   const emotions = Object.keys(EM);
   const rows = allTickets.map(t => {
-    const em   = emotions[Math.floor(Math.random()*emotions.length)];
-    const e    = EM[em];
-    const conf = (Math.random()*.3+.7).toFixed(2);
-    const alert= em==="angry" || em==="disappointed";
-    const reason = em==="angry" ? "Đe dọa viral" : em==="disappointed" ? "Lịch sự giả, bỏ cuộc" : "—";
+  const em   = t.emotion || "neutral";   // ← dùng data thật
+  const e    = EM[em];
+  const conf = t.confidence || 0;
+  const alert = t.alert || false;
+  const reason = t.reason || "—";
 
     if (filter.emotion && em !== filter.emotion) return "";
     if (filter.alert   && !alert)                return "";
