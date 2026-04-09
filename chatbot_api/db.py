@@ -1,7 +1,7 @@
 import sqlite3
 from pathlib import Path
 
-DB_PATH = "chatbot_api/cskh.db"
+DB_PATH = "../.cache/cskh.db"
 
 def get_conn():
     conn = sqlite3.connect(DB_PATH)
@@ -9,6 +9,7 @@ def get_conn():
     return conn
 
 def init_db():
+    Path(DB_PATH).parent.mkdir(parents=True, exist_ok=True)
     conn = get_conn()
     conn.executescript("""
     CREATE TABLE IF NOT EXISTS customers (

@@ -292,15 +292,15 @@
         </div>
         <div class="header-actions">
           <span id="ticketBadge" class="badge bg-light text-secondary border" style="font-size:10px;align-self:center;margin-right:4px;"></span>
-          <button class="hdr-btn" onclick="newSession()" title="Cuộc hội thoại mới">🔄</button>
-          <button class="hdr-btn" onclick="toggleChat()" title="Thu nhỏ">−</button>
-          <button class="hdr-btn" onclick="closeChat()" title="Đóng">✕</button>
+          <button type="button" class="hdr-btn" onclick="newSession()" title="Cuộc hội thoại mới">🔄</button>
+          <button type="button" class="hdr-btn" onclick="toggleChat()" title="Thu nhỏ">−</button>
+          <button type="button" class="hdr-btn" onclick="closeChat()" title="Đóng">✕</button>
         </div>
       </div>
 
       <div class="chat-body">
         <div class="chat-messages" id="chatMessages">
-          <button class="scroll-btn" id="scrollBtn" onclick="scrollToBottom()">↓</button>
+          <button type="button" class="scroll-btn" id="scrollBtn" onclick="scrollToBottom()">↓</button>
           <div class="welcome-msg" id="welcomeMsg">
             <span class="emoji">👋</span>
             Xin chào! Em là trợ lý CSKH tự động.<br/>
@@ -314,25 +314,25 @@
             <span>Ticket <span class="ticket-id" id="ticketIdSpan"></span></span>
             <div style="display:flex;align-items:center;gap:6px;">
               <span id="currentEmotion"></span>
-              <button class="new-session-btn" onclick="newSession()">✕ Mới</button>
+              <button type="button" class="new-session-btn" onclick="newSession()">✕ Mới</button>
             </div>
           </div>
           <div class="quick-btns">
-            <button class="quick-btn" onclick="sendQuick('Đơn hàng DH001 đang ở đâu?')">📦 Tra đơn</button>
-            <button class="quick-btn" onclick="sendQuick('Chính sách đổi trả như thế nào?')">↩️ Đổi trả</button>
-            <button class="quick-btn" onclick="sendQuick('Ship lâu vl 5 ngày rồi')">😤 Phàn nàn</button>
-            <button class="quick-btn" onclick="sendQuick('Cảm ơn bạn hỗ trợ nhiệt tình!')">😊 Cảm ơn</button>
+            <button type="button" class="quick-btn" onclick="sendQuick(event, 'Đơn hàng DH001 đang ở đâu?')">📦 Tra đơn</button>
+            <button type="button" class="quick-btn" onclick="sendQuick(event, 'Chính sách đổi trả như thế nào?')">↩️ Đổi trả</button>
+            <button type="button" class="quick-btn" onclick="sendQuick(event, 'Ship lâu vl 5 ngày rồi')">😤 Phàn nàn</button>
+            <button type="button" class="quick-btn" onclick="sendQuick(event, 'Cảm ơn bạn hỗ trợ nhiệt tình!')">😊 Cảm ơn</button>
           </div>
           <div class="input-row">
             <textarea id="chatInput" class="chat-input" placeholder="Nhập tin nhắn..." rows="1"
               onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-            <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+            <button type="button" class="send-btn" id="sendBtn" onclick="sendMessage(event)">➤</button>
           </div>
         </div>
       </div>
     </div>
 
-    <button class="chat-bubble-btn" id="chatBubble" onclick="openChat()">
+    <button type="button" class="chat-bubble-btn" id="chatBubble" onclick="openChat()">
       🤖 <span class="chat-unread" id="unreadBadge">1</span>
     </button>
   </div>
@@ -466,8 +466,12 @@ function setupScrollListener() {
 }
 
 function autoResize(el) { el.style.height = "auto"; el.style.height = Math.min(el.scrollHeight, 100) + "px"; }
-function handleKey(e)   { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
-function sendQuick(msg) { document.getElementById("chatInput").value = msg; sendMessage(); }
+function handleKey(e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(e); } }
+function sendQuick(e, msg) { 
+  if (e) e.preventDefault();
+  document.getElementById("chatInput").value = msg; 
+  sendMessage(e); 
+}
 function nowTime()      { return new Date().toLocaleTimeString("vi-VN", { hour:"2-digit", minute:"2-digit" }); }
 
 // ── Render message ────────────────────────────
@@ -533,7 +537,8 @@ function updateTicketInfo(tid, emotion) {
 }
 
 // ── Send message ──────────────────────────────
-async function sendMessage() {
+async function sendMessage(e) {
+  if (e) e.preventDefault();
   const input = document.getElementById("chatInput");
   const msg   = input.value.trim();
   if (!msg) return;

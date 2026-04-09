@@ -91,96 +91,23 @@ async def chat_stream_endpoint(req: ChatRequest):
          "text": m["content"]}
         for m in history
     ]
-    msg_id = db.save_message(ticket_id, "customer", req.message)  # ← lưu msg_id
-
-    if is_order_query(req.message):
-        reply = order_lookup(req.message)
-        db.save_message(ticket_id, "bot", reply)
-
-        # ── THÊM: save emotion cho order query ──
-        turns  = history_turns[-8:] + [{"role": "customer", "text": req.message}]
-        emotion = orchestrator(turns)
-        if emotion:
-            db.save_emotion(
-                ticket_id  = ticket_id,
-                message_id = msg_id,
-                emotion    = emotion.get("emotion", "neutral"),
-                confidence = emotion.get("confidence", 0.0),
-                reason     = emotion.get("reason", ""),
-                alert      = emotion.get("alert", False),
-            )
-
-        async def one_shot():
-            yield reply.encode("utf-8")
-        return StreamingResponse(
-            one_shot(),
-            media_type="text/plain; charset=utf-8",
-            headers={"X-Ticket-ID": str(ticket_id)},
-        )
-
-    # Ghép prompt
-    SYSTEM_PROMPT = """Bạn là trợ lý CSKH tiếng Việt của shop.
-
-    QUY TẮC BẮT BUỘC:
-    1. TUYỆT ĐỐI không bịa đặt: số tài khoản, giá tiền, tên sản phẩm, quy trình, chính sách.
-    2. Nếu không có thông tin → trả lời: "Em chưa có thông tin về vấn đề này, anh/chị vui lòng liên hệ nhân viên hỗ trợ nhé!"
-    3. Chỉ tra cứu đơn hàng khi khách cung cấp mã đơn (VD: DH001) hoặc số điện thoại.
-    4. Không tự ý hướng dẫn đặt hàng, thanh toán nếu không được cung cấp thông tin chính xác.
-    5. Trả lời ngắn gọn, lịch sự, xưng "em"."""
-    lines = [SYSTEM_PROMPT, ""]
-    for m in history_turns[-10:]:
-        prefix = "Khách" if m["role"] == "customer" else "Agent"
-        lines.append(f"{prefix}: {m['text']}")
-    lines.append(f"Khách: {req.message}")
-    lines.append("Agent:")
-    full_message = "\n".join(lines)
+    msg_id = db.save_message(ticket_id, "customer", req.message)
 
     async def generate():
         full_reply = []
-        buffer = ""
-
-        async def stream_tokens():
-            loop = asyncio.get_event_loop()
-            queue = asyncio.Queue()
-
-            def producer():
-                for token in call_api_stream(full_message, session_id=str(ticket_id)):
-                    loop.call_soon_threadsafe(queue.put_nowait, token)
-                loop.call_soon_threadsafe(queue.put_nowait, None)  # sentinel
-
-            loop.run_in_executor(None, producer)
-
-            while True:
-                token = await queue.get()
-                if token is None:
-                    break
-                yield token
-
-        async for token in stream_tokens():
-            buffer += token
-
-            if "Khách:" in buffer:
-                clean = buffer.split("Khách:")[0].strip()
-                if clean:
-                    full_reply.append(clean)
-                    yield clean.encode("utf-8")
-                break
-
-            if len(buffer) > 20 or token.endswith((".", "!", "?", "\n")):
-                full_reply.append(buffer)
-                yield buffer.encode("utf-8")
-                buffer = ""
-
-        if buffer and "Khách:" not in buffer:
-            full_reply.append(buffer)
-            yield buffer.encode("utf-8")
+        
+        # Sử dụng strategy để lấy luồng token
+        from chatbot_api.orchestrator import strategy
+        async for token in strategy.process_chat_stream(req.message, history_turns, session_id=str(ticket_id)):
+            full_reply.append(token)
+            yield token.encode("utf-8")
 
         bot_reply = "".join(full_reply)
         db.save_message(ticket_id, "bot", bot_reply)
 
+        # Phân tích cảm xúc cuối luồng
         turns = history_turns[-8:] + [{"role": "customer", "text": req.message}]
-        emotion = orchestrator(turns)
-        print("emotion", emotion)
+        emotion = strategy.analyze_emotion(turns)
         if emotion:
             db.save_emotion(
                 ticket_id=ticket_id, message_id=msg_id,

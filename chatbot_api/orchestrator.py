@@ -133,13 +133,14 @@ def parse_result(raw: str) -> dict:
     try:    return json.loads(m.group()) if m else {}
     except: return {}
 
-# ── Orchestrator chính ────────────────────────
+from chatbot_api.strategies import StrategyFactory
+from chatbot_api.config import settings
 
-def orchestrator(turns: list) -> dict:
-    """
-    Input:  turns = [{"role":"agent/customer","text":"..."}]
-    Output: {"emotion":"...","confidence":0.0,"reason":"...","alert":bool}
-    """
+# ── Cấu hình Strategy ─────────────────────────
+strategy = StrategyFactory.get_strategy(use_mock=settings.USE_MOCK_MODE)
+
+def real_llm_orchestrator(turns: list) -> dict:
+    """Logic phân tích cảm xúc gốc sử dụng LLM."""
     mem       = WorkingMemory()
     last_cust = next(
         (t["text"] for t in reversed(turns) if t["role"] == "customer"), ""
@@ -169,7 +170,6 @@ def orchestrator(turns: list) -> dict:
         mem.retrieved_docs = merged[:4]
 
     # Step 3: Generate + Self-reflect
-    # Mỗi lần retry dùng session_id khác nhau để tránh API nhớ context sai
     for attempt in range(1, 3):
         mem.attempts = attempt
         session_id   = f"emotion-{uuid.uuid4().hex[:12]}"
@@ -180,8 +180,15 @@ def orchestrator(turns: list) -> dict:
 
         if conf >= 0.75:
             break
-        # attempt 2: thêm gợi ý vào prompt thay vì dùng reasoner
         if mem.complexity == "complex" and attempt == 1:
             mem.query = f"[Phân tích kỹ hơn] {mem.query}"
 
     return mem.result
+
+# ── Orchestrator chính (Wrapper) ──────────────
+
+def orchestrator(turns: list) -> dict:
+    """
+    Hàm entry point phân tích cảm xúc, gọi thông qua Strategy.
+    """
+    return strategy.analyze_emotion(turns)
