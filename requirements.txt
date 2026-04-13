@@ -2,3 +2,5 @@ sentence_transformers
 rank-bm25
 chromadb
 fastapi
+kafka-python==2.0.2
+apscheduler==3.10.4

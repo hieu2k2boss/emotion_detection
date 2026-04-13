@@ -29,7 +29,6 @@ from batch.batch_views_db import (
 )
 from batch.producer import publish_message, publish_emotion, close_producer
 from batch.jobs import create_scheduler, run_all_jobs_now
-from batch.speed_layer import init_speed_layer, get_speed_layer
 
 import logging
 logger = logging.getLogger(__name__)
@@ -43,10 +42,6 @@ async def lifespan(app: FastAPI):
     db.init_db()
     db.seed_db()
     load_kb("data")
-
-    # Init Speed Layer in-memory tracking
-    init_speed_layer(feed_size=100, alert_size=200)
-    print("✅ Speed Layer initialized")
 
     print("⏳ Initializing Batch Layer...")
     init_batch_db()
@@ -122,11 +117,6 @@ def root():
 def chat_endpoint(req: ChatRequest):
     ticket_id = req.ticket_id or db.create_ticket(None, None, "other")
 
-    # Track new ticket in Speed Layer
-    if not req.ticket_id:
-        from batch.speed_layer import track_new_ticket as _track
-        _track(ticket_id)
-
     history = db.get_messages(ticket_id)
     history_turns = [
         {"role": "customer" if m["role"] == "customer" else "agent",
@@ -137,10 +127,6 @@ def chat_endpoint(req: ChatRequest):
     # Save + publish customer message
     msg_id = db.save_message(ticket_id, "customer", req.message)
     _safe_publish_message(ticket_id, msg_id, "customer", req.message, str(ticket_id))
-
-    # Track customer message in Speed Layer
-    from batch.speed_layer import track_message as _track_msg
-    _track_msg(ticket_id, msg_id, "customer", req.message, str(ticket_id))
 
     # Process
     reply, emotion = chat(req.message, history_turns, session_id=str(ticket_id))
@@ -159,17 +145,6 @@ def chat_endpoint(req: ChatRequest):
         alert      = emotion.get("alert", False),
     )
     _safe_publish_emotion(ticket_id, msg_id, emotion)
-
-    # Track emotion in Speed Layer
-    from batch.speed_layer import track_emotion as _track_em
-    _track_em(
-        ticket_id,
-        msg_id,
-        emotion.get("emotion", "neutral"),
-        emotion.get("confidence", 0.0),
-        emotion.get("reason", ""),
-        emotion.get("alert", False),
-    )
 
     return ChatResponse(
         ticket_id  = ticket_id,
@@ -331,129 +306,6 @@ def trigger_batch_now(job: Optional[str] = None):
     threading.Thread(target=fn, daemon=True).start()
 
     return {"status": "triggered", "job": job or "all"}
-
-
-# ── Speed Layer endpoints ────────────────────────────
-
-@app.get("/admin/speed/stats")
-def speed_stats():
-    """
-    Speed Layer stats (từ lúc start server).
-    Merge với batch để có full history.
-    """
-    layer = get_speed_layer()
-    if not layer:
-        return {"error": "Speed Layer not initialized"}, 503
-
-    return {
-        "layer": "speed",
-        "stats": layer.get_stats(),
-    }
-
-
-@app.get("/admin/speed/feed")
-def speed_feed(limit: int = 50):
-    """
-    N tin nhắn gần nhất (customer messages).
-    Realtime feed cho Live Feed tab.
-    """
-    layer = get_speed_layer()
-    if not layer:
-        return {"error": "Speed Layer not initialized"}, 503
-
-    feed = layer.get_recent_feed(limit=limit)
-
-    # Enrich với emotion data nếu có
-    enriched = []
-    for item in feed:
-        ticket_id = item["ticket_id"]
-        emotion_data = layer.get_ticket_emotion(ticket_id)
-        enriched.append({
-            **item,
-            "emotion": emotion_data.get("emotion") if emotion_data else "neutral",
-            "confidence": emotion_data.get("confidence", 0.0) if emotion_data else 0.0,
-            "alert": emotion_data.get("alert", False) if emotion_data else False,
-        })
-
-    return {
-        "layer": "speed",
-        "feed": enriched,
-    }
-
-
-@app.get("/admin/speed/alerts")
-def speed_alerts(limit: int = 50):
-    """
-    N alerts gần nhất.
-    Realtime alerts cho Admin Dashboard.
-    """
-    layer = get_speed_layer()
-    if not layer:
-        return {"error": "Speed Layer not initialized"}, 503
-
-    alerts = layer.get_alert_queue(limit=limit)
-
-    return {
-        "layer": "speed",
-        "alerts": alerts,
-    }
-
-
-# ── Serving Layer (merged) endpoints ─────────────────
-
-@app.get("/admin/serving/emotion-stats")
-def serving_emotion_stats(hours: int = 24):
-    """
-    Serving Layer: merge Batch + Speed emotion stats.
-    Return distribution + total alerts.
-    """
-    from batch.serving_layer import merge_emotion_stats
-    result = merge_emotion_stats(hours=hours)
-    return result
-
-
-@app.get("/admin/serving/high-risk")
-def serving_high_risk(limit: int = 20):
-    """
-    Serving Layer: merge Batch + Speed high risk customers.
-    Batch risk score + Speed recent emotion.
-    """
-    from batch.serving_layer import merge_high_risk_customers
-    result = merge_high_risk_customers(limit=limit)
-    return result
-
-
-@app.get("/admin/serving/alert-report/{date}")
-def serving_alert_report(date: str):
-    """
-    Serving Layer: merge Batch + Speed alert report.
-    Batch daily summary + Speed alerts hôm nay.
-    """
-    from batch.serving_layer import merge_alert_report
-    result = merge_alert_report(date)
-    return result
-
-
-@app.get("/admin/serving/live-feed")
-def serving_live_feed(limit: int = 50):
-    """
-    Serving Layer: live feed với emotion enrichment.
-    Realtime từ Speed Layer.
-    """
-    from batch.serving_layer import merge_live_feed
-    result = merge_live_feed(limit=limit)
-    return result
-
-
-@app.get("/admin/serving/dashboard")
-def serving_dashboard():
-    """
-    Serving Layer: tổng hợp dashboard.
-    Merge Batch + Speed → full overview.
-    """
-    from batch.serving_layer import get_dashboard_overview
-    result = get_dashboard_overview()
-    return result
 
 
 if __name__ == "__main__":
