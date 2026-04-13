@@ -1,10 +1,15 @@
 import sqlite3
 from pathlib import Path
 
-DB_PATH = "chatbot_api/cskh.db"
+# Xác định đường dẫn tuyệt đối đến file DB
+# __file__ là chatbot_api/db.py -> parent là chatbot_api/ -> parent của parent là gốc project
+PROJECT_ROOT = Path(__file__).parent.parent
+DB_PATH = PROJECT_ROOT / ".cache" / "cskh.db"
 
 def get_conn():
-    conn = sqlite3.connect(DB_PATH)
+    # Đảm bảo thư mục .cache tồn tại trong gốc project
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     return conn
 
