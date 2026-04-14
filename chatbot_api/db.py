@@ -1,253 +1,192 @@
-import sqlite3
-from pathlib import Path
+import logging
+from datetime import datetime
+from typing import Optional, List, Dict, Any
+from chatbot_api.database import db
 
-# Xác định đường dẫn tuyệt đối đến file DB
-# __file__ là chatbot_api/db.py -> parent là chatbot_api/ -> parent của parent là gốc project
-PROJECT_ROOT = Path(__file__).parent.parent
-DB_PATH = PROJECT_ROOT / ".cache" / "cskh.db"
+logger = logging.getLogger(__name__)
 
-def get_conn():
-    # Đảm bảo thư mục .cache tồn tại trong gốc project
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(DB_PATH))
-    conn.row_factory = sqlite3.Row
-    return conn
+# ── Write helpers ─────────────────────────────
 
-def init_db():
-    conn = get_conn()
-    conn.executescript("""
-    CREATE TABLE IF NOT EXISTS customers (
-        id         INTEGER PRIMARY KEY AUTOINCREMENT,
-        name       TEXT    NOT NULL,
-        phone      TEXT    UNIQUE NOT NULL,
-        email      TEXT,
-        address    TEXT,
-        tier       TEXT    DEFAULT 'normal'
-    );
-    CREATE TABLE IF NOT EXISTS products (
-        id         INTEGER PRIMARY KEY AUTOINCREMENT,
-        name       TEXT    NOT NULL,
-        price      INTEGER NOT NULL,
-        category   TEXT,
-        stock      INTEGER DEFAULT 0
-    );
-    CREATE TABLE IF NOT EXISTS orders (
-        id         TEXT    PRIMARY KEY,
-        customer_id INTEGER NOT NULL,
-        total      INTEGER NOT NULL,
-        status     TEXT    NOT NULL DEFAULT 'pending',
-        created_at TEXT    DEFAULT (datetime('now')),
-        eta        TEXT,
-        address    TEXT,
-        shipper    TEXT,
-        FOREIGN KEY (customer_id) REFERENCES customers(id)
-    );
-    CREATE TABLE IF NOT EXISTS order_items (
-        id         INTEGER PRIMARY KEY AUTOINCREMENT,
-        order_id   TEXT    NOT NULL,
-        product_id INTEGER NOT NULL,
-        qty        INTEGER NOT NULL,
-        price      INTEGER NOT NULL,
-        FOREIGN KEY (order_id)   REFERENCES orders(id),
-        FOREIGN KEY (product_id) REFERENCES products(id)
-    );
-    CREATE TABLE IF NOT EXISTS payments (
-        id         INTEGER PRIMARY KEY AUTOINCREMENT,
-        order_id   TEXT    NOT NULL,
-        amount     INTEGER NOT NULL,
-        method     TEXT,
-        status     TEXT    DEFAULT 'pending',
-        tx_code    TEXT,
-        paid_at    TEXT,
-        FOREIGN KEY (order_id) REFERENCES orders(id)
-    );
-    CREATE TABLE IF NOT EXISTS tickets (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
-        customer_id INTEGER,
-        order_id    TEXT,
-        status      TEXT DEFAULT 'open',
-        category    TEXT DEFAULT 'other',
-        created_at  TEXT DEFAULT (datetime('now'))
-    );
-    CREATE TABLE IF NOT EXISTS messages (
-        id         INTEGER PRIMARY KEY AUTOINCREMENT,
-        ticket_id  INTEGER NOT NULL,
-        role       TEXT    NOT NULL,
-        content    TEXT    NOT NULL,
-        created_at TEXT    DEFAULT (datetime('now')),
-        FOREIGN KEY (ticket_id) REFERENCES tickets(id)
-    );
-    CREATE TABLE IF NOT EXISTS emotion_logs (
-        id         INTEGER PRIMARY KEY AUTOINCREMENT,
-        ticket_id  INTEGER NOT NULL,
-        message_id INTEGER NOT NULL,
-        emotion    TEXT    NOT NULL,
-        confidence REAL    NOT NULL,
-        reason     TEXT,
-        alert      INTEGER DEFAULT 0,
-        created_at TEXT    DEFAULT (datetime('now'))
-    );
-    CREATE INDEX IF NOT EXISTS idx_customer_phone ON customers(phone);
-    CREATE INDEX IF NOT EXISTS idx_orders_customer ON orders(customer_id);
-    CREATE INDEX IF NOT EXISTS idx_messages_ticket ON messages(ticket_id);
-    """)
-    conn.commit()
-    conn.close()
+async def create_ticket(customer_id: Optional[int], order_id: Optional[str], category: str) -> int:
+    """Tạo ticket mới trong MongoDB."""
+    try:
+        # Trong MongoDB, chúng ta có thể dùng ID tự tăng hoặc auto-generated.
+        # Để giữ tương thích với code cũ dùng int, ta sẽ lấy count + 1 hoặc dùng timestamp.
+        # Ở đây dùng timestamp đơn giản cho demo.
+        ticket_id = int(datetime.utcnow().timestamp() * 1000)
+        await db.db["tickets"].insert_one({
+            "ticket_id": ticket_id,
+            "customer_id": customer_id,
+            "order_id": order_id,
+            "category": category,
+            "status": "open",
+            "created_at": datetime.utcnow()
+        })
+        return ticket_id
+    except Exception as e:
+        logger.error(f"Lỗi create_ticket: {e}")
+        return 0
 
-def seed_db():
-    conn = get_conn()
-    cur  = conn.cursor()
+async def save_message(ticket_id: int, role: str, content: str, ai_analysis: Optional[Dict] = None) -> str:
+    """Lưu tin nhắn thô, có thể đính kèm kết quả phân tích AI."""
+    try:
+        doc = {
+            "ticket_id": ticket_id,
+            "role": role,
+            "content": content,
+            "timestamp": datetime.utcnow(),
+            "ai_analysis": ai_analysis
+        }
+        result = await db.db["messages"].insert_one(doc)
+        return str(result.inserted_id)
+    except Exception as e:
+        logger.error(f"Lỗi save_message: {e}")
+        return ""
 
-    cur.executemany("INSERT OR IGNORE INTO customers (name,phone,email,address,tier) VALUES (?,?,?,?,?)", [
-        ("Nguyễn Văn An",   "0901234567", "an@gmail.com",   "123 Lê Lợi Q1",       "gold"),
-        ("Trần Thị Bình",   "0912345678", "binh@gmail.com", "456 Nguyễn Huệ Q1",    "normal"),
-        ("Lê Văn Cường",    "0923456789", "cuong@gmail.com","789 Trần Hưng Đạo Q5", "silver"),
-    ])
-    cur.executemany("INSERT OR IGNORE INTO products (name,price,category,stock) VALUES (?,?,?,?)", [
-        ("Áo thun nam",  150000, "thoi-trang", 100),
-        ("Váy lụa",      850000, "thoi-trang",  50),
-        ("Máy lọc nước",2500000, "dien-tu",     20),
-    ])
-    cur.executemany("""INSERT OR IGNORE INTO orders
-        (id,customer_id,total,status,created_at,eta,address,shipper) VALUES (?,?,?,?,?,?,?,?)""", [
-        ("DH001", 1, 300000,  "delivering","2024-05-10","2024-05-13","123 Lê Lợi Q1",      "GHN"),
-        ("DH002", 2, 850000,  "delivered", "2024-05-08","2024-05-11","456 Nguyễn Huệ Q1",  "GHTK"),
-        ("DH003", 3, 2500000, "pending",   "2024-05-12","2024-05-15","789 Trần Hưng Đạo Q5",None),
-    ])
-    cur.executemany("INSERT OR IGNORE INTO order_items (order_id,product_id,qty,price) VALUES (?,?,?,?)", [
-        ("DH001", 1, 2, 150000),
-        ("DH002", 2, 1, 850000),
-        ("DH003", 3, 1, 2500000),
-    ])
-    cur.executemany("INSERT OR IGNORE INTO payments (order_id,amount,method,status,tx_code,paid_at) VALUES (?,?,?,?,?,?)", [
-        ("DH001", 300000,  "banking", "success", "TX001", "2024-05-10"),
-        ("DH002", 850000,  "momo",    "success", "TX002", "2024-05-08"),
-        ("DH003", 2500000, "cod",     "pending",  None,    None),
-    ])
-    conn.commit()
-    conn.close()
+async def update_message_analysis(message_id: str, analysis: Dict):
+    """Cập nhật kết quả phân tích AI cho một tin nhắn đã tồn tại."""
+    try:
+        from bson import ObjectId
+        await db.db["messages"].update_one(
+            {"_id": ObjectId(message_id)},
+            {"$set": {"ai_analysis": analysis}}
+        )
+    except Exception as e:
+        logger.error(f"Lỗi update_message_analysis: {e}")
+
+async def save_emotion(ticket_id: int, message_id: str,
+                       emotion: str, confidence: float,
+                       reason: str, alert: bool, processing_time_ms: int = 0):
+    """
+    Refactor: Gộp vào collection messages.
+    Tìm tin nhắn theo ID và update field ai_analysis.
+    """
+    analysis = {
+        "emotion_label": emotion,
+        "confidence": confidence,
+        "reason": reason,
+        "has_alert": alert,
+        "processing_time_ms": processing_time_ms
+    }
+    await update_message_analysis(message_id, analysis)
 
 # ── Query helpers ─────────────────────────────
 
-# db.py — thêm DISTINCT hoặc GROUP BY
-def get_order(order_id: str) -> dict | None:
-    conn  = get_conn()
-    order = conn.execute("""
-        SELECT DISTINCT o.*, c.name as customer_name, c.phone, c.tier,
-               p.method, p.status as pay_status, p.tx_code
-        FROM orders o
-        JOIN customers c ON o.customer_id = c.id
-        LEFT JOIN payments p ON o.id = p.order_id
-        WHERE o.id = ?
-        LIMIT 1          -- chỉ lấy 1 row đơn hàng
-    """, (order_id.upper(),)).fetchone()
+async def get_messages(ticket_id: int) -> List[Dict]:
+    """Lấy danh sách tin nhắn của một ticket."""
+    try:
+        cursor = db.db["messages"].find({"ticket_id": ticket_id}).sort("timestamp", 1)
+        messages = await cursor.to_list(length=100)
+        for m in messages:
+            m["_id"] = str(m["_id"])
+            # Format lại để tương thích với code cũ nếu cần
+            m["created_at"] = m["timestamp"].isoformat()
+        return messages
+    except Exception as e:
+        logger.error(f"Lỗi get_messages: {e}")
+        return []
 
-    if not order:
-        conn.close()
+async def get_all_tickets_with_emotions() -> List[Dict]:
+    """
+    Sử dụng Aggregation để lấy group messages theo ticket và đính kèm emotion mới nhất.
+    """
+    pipeline = [
+        {"$sort": {"ticket_id": 1, "timestamp": 1}},
+        {
+            "$group": {
+                "_id": "$ticket_id",
+                "messages": {
+                    "$push": {
+                        "role": "$role",
+                        "content": "$content"
+                    }
+                },
+                # Lấy ai_analysis cuối cùng mà khác null
+                "analyses": {
+                    "$push": "$ai_analysis"
+                }
+            }
+        },
+        {
+            "$project": {
+                "ticket_id": "$_id",
+                "messages": 1,
+                "last_analysis": {
+                    "$reduce": {
+                        "input": "$analyses",
+                        "initialValue": None,
+                        "in": {"$ifNull": ["$$this", "$$value"]}
+                    }
+                }
+            }
+        },
+        {
+            "$project": {
+                "ticket_id": 1,
+                "messages": 1,
+                "emotion": {"$ifNull": ["$last_analysis.emotion_label", "neutral"]},
+                "confidence": {"$ifNull": ["$last_analysis.confidence", 0]},
+                "alert": {"$ifNull": ["$last_analysis.has_alert", False]},
+                "reason": {"$ifNull": ["$last_analysis.reason", ""]}
+            }
+        }
+    ]
+    try:
+        cursor = db.db["messages"].aggregate(pipeline)
+        return await cursor.to_list(length=1000)
+    except Exception as e:
+        logger.error(f"Lỗi get_all_tickets_with_emotions: {e}")
+        return []
+
+async def get_order(order_id: str) -> Optional[Dict]:
+    """Lấy thông tin đơn hàng từ MongoDB (cần migrate collection orders)."""
+    try:
+        order = await db.db["orders"].find_one({"order_id": order_id.upper()})
+        if not order: return None
+        
+        items_cursor = db.db["order_items"].find({"order_id": order_id.upper()})
+        items = await items_cursor.to_list(length=100)
+        
+        return {
+            "order": order,
+            "items": items
+        }
+    except Exception as e:
+        logger.error(f"Lỗi get_order: {e}")
         return None
 
-    items = conn.execute("""
-        SELECT pr.name, oi.qty, oi.price
-        FROM order_items oi
-        JOIN products pr ON oi.product_id = pr.id
-        WHERE oi.order_id = ?
-    """, (order_id.upper(),)).fetchall()
+# Seed data functions (Refactored to Mongo)
+async def init_db():
+    """Trigger index creation (đã có trong database.py)."""
+    await db.create_indexes()
 
-    conn.close()
-    return {"order": dict(order), "items": [dict(i) for i in items]}
+async def seed_db():
+    """Seed dữ liệu mẫu vào MongoDB cho demo."""
+    try:
+        # Customers
+        customers = [
+            {"id": 1, "name": "Nguyễn Văn An", "phone": "0901234567", "tier": "gold"},
+            {"id": 2, "name": "Trần Thị Bình", "phone": "0912345678", "tier": "normal"},
+        ]
+        await db.db["customers"].delete_many({})
+        await db.db["customers"].insert_many(customers)
+        
+        # Products
+        products = [
+            {"id": 1, "name": "Áo thun nam", "price": 150000, "category": "thoi-trang"},
+            {"id": 2, "name": "Váy lụa", "price": 850000, "category": "thoi-trang"},
+        ]
+        await db.db["products"].delete_many({})
+        await db.db["products"].insert_many(products)
 
-def get_orders_by_phone(phone: str) -> list:
-    conn = get_conn()
-    rows = conn.execute("""
-        SELECT o.id, o.status, o.total, o.created_at
-        FROM orders o JOIN customers c ON o.customer_id = c.id
-        WHERE c.phone = ?
-        ORDER BY o.created_at DESC LIMIT 5
-    """, (phone,)).fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
-
-def create_ticket(customer_id: int | None, order_id: str | None, category: str) -> int:
-    conn = get_conn()
-    cur  = conn.execute(
-        "INSERT INTO tickets (customer_id, order_id, category) VALUES (?,?,?)",
-        (customer_id, order_id, category)
-    )
-    tid = cur.lastrowid
-    conn.commit(); conn.close()
-    return tid
-
-def save_message(ticket_id: int, role: str, content: str) -> int:
-    conn = get_conn()
-    cur  = conn.execute(
-        "INSERT INTO messages (ticket_id, role, content) VALUES (?,?,?)",
-        (ticket_id, role, content)
-    )
-    mid = cur.lastrowid
-    conn.commit(); conn.close()
-    return mid
-
-def save_emotion(ticket_id: int, message_id: int,
-                 emotion: str, confidence: float,
-                 reason: str, alert: bool):
-    conn = get_conn()
-    conn.execute("""
-        INSERT INTO emotion_logs
-            (ticket_id, message_id, emotion, confidence, reason, alert)
-        VALUES (?,?,?,?,?,?)
-    """, (ticket_id, message_id, emotion, confidence, reason, int(alert)))
-    conn.commit(); conn.close()
-
-def get_messages(ticket_id: int) -> list:
-    conn = get_conn()
-    rows = conn.execute(
-        "SELECT role, content, created_at FROM messages WHERE ticket_id=? ORDER BY id",
-        (ticket_id,)
-    ).fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
-
-def get_all_tickets_with_emotions():
-    conn = get_conn()
-    
-    # Query 1: lấy messages (không JOIN emotion để tránh duplicate)
-    msg_rows = conn.execute("""
-        SELECT ticket_id, role, content
-        FROM messages
-        ORDER BY ticket_id, id ASC  -- id ASC = đúng thứ tự từ đầu đến cuối
-    """).fetchall()
-
-    # Query 2: lấy emotion MỚI NHẤT của mỗi ticket
-    em_rows = conn.execute("""
-        SELECT ticket_id, emotion, confidence, alert, reason
-        FROM emotion_logs
-        WHERE id IN (
-            SELECT MAX(id) FROM emotion_logs GROUP BY ticket_id
-        )
-    """).fetchall()
-
-    # Gộp lại
-    tickets = {}
-    for r in msg_rows:
-        tid = r["ticket_id"]
-        if tid not in tickets:
-            tickets[tid] = {"ticket_id": tid, "messages": [],
-                            "emotion": "neutral", "confidence": 0,
-                            "alert": False, "reason": ""}
-        tickets[tid]["messages"].append({
-            "role": r["role"],
-            "content": r["content"]
-        })
-
-    for r in em_rows:
-        tid = r["ticket_id"]
-        if tid in tickets:
-            tickets[tid].update({
-                "emotion":    r["emotion"],
-                "confidence": r["confidence"],
-                "alert":      bool(r["alert"]),
-                "reason":     r["reason"] or "",
-            })
-
-    conn.close()
-    return list(tickets.values())
+        # Orders
+        orders = [
+            {"order_id": "DH001", "customer_id": 1, "total": 300000, "status": "delivering"},
+            {"order_id": "DH002", "customer_id": 2, "total": 850000, "status": "delivered"},
+        ]
+        await db.db["orders"].delete_many({})
+        await db.db["orders"].insert_many(orders)
+        
+        logger.info("Đã seed dữ liệu mẫu thành công.")
+    except Exception as e:
+        logger.error(f"Lỗi seed_db: {e}")

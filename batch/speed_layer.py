@@ -176,28 +176,58 @@ def get_speed_layer() -> Optional[SpeedLayer]:
 # ── Helper để ingest từ main.py ───────────────────────
 
 def track_message(ticket_id: int, message_id: int, role: str, content: str, session_id: str = ""):
-    """
-    Helper để track message từ Speed Layer endpoints.
-    """
     layer = get_speed_layer()
     if layer:
         layer.ingest_message(ticket_id, message_id, role, content, session_id)
 
-
 def track_emotion(ticket_id: int, message_id: int, emotion: str,
                   confidence: float, reason: str, alert: bool):
-    """
-    Helper để track emotion từ Speed Layer endpoints.
-    """
     layer = get_speed_layer()
     if layer:
         layer.ingest_emotion(ticket_id, message_id, emotion, confidence, reason, alert)
 
-
 def track_new_ticket(ticket_id: int):
-    """
-    Helper để track new ticket.
-    """
     layer = get_speed_layer()
     if layer:
         layer.ingest_new_ticket(ticket_id)
+
+async def sync_speed_layer_from_db():
+    """
+    Backfill: Lấy dữ liệu trong ngày từ MongoDB để populate SpeedLayer khi khởi động.
+    """
+    from chatbot_api.database import db
+    layer = get_speed_layer()
+    if layer is None or db.db is None: return
+
+    # Lấy tin nhắn trong ngày (UTC)
+    from datetime import datetime, timezone
+    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    # 1. Sync counts và feed
+    cursor = db.db["messages"].find({"timestamp": {"$gte": today_start}})
+    count = 0
+    async for msg in cursor:
+        curr_ticket_id = msg.get("ticket_id")
+        curr_msg_id = str(msg.get("_id"))
+        role = msg.get("role")
+        content = msg.get("content", "")
+        analysis = msg.get("ai_analysis")
+
+        layer.ingest_message(curr_ticket_id, curr_msg_id, role, content)
+        if analysis:
+            layer.ingest_emotion(
+                ticket_id=curr_ticket_id,
+                message_id=curr_msg_id,
+                emotion=analysis.get("emotion_label", "neutral"),
+                confidence=analysis.get("confidence", 0.0),
+                reason=analysis.get("reason", ""),
+                alert=analysis.get("has_alert", False)
+            )
+        count += 1
+    
+    # 2. Sync ticket count
+    unique_tickets = await db.db["messages"].distinct("ticket_id", {"timestamp": {"$gte": today_start}})
+    layer._ticket_count = len(unique_tickets)
+
+    logger.info(f"[SpeedLayer] Backfill complete: synced {count} messages from MongoDB.")
+    

@@ -1,11 +1,3 @@
-"""
-main.py (updated) — tích hợp Batch Layer
-─────────────────────────────────────────
-Thay đổi so với phiên bản gốc:
-  1. Lifespan: khởi tạo Batch DB + APScheduler
-  2. /chat và /chat/stream: publish event lên Kafka sau khi save
-  3. Thêm /admin/batch/* endpoints (Serving Layer)
-"""
 from chatbot_api.orchestrator import orchestrator
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,10 +6,10 @@ from contextlib import asynccontextmanager
 from pydantic import BaseModel
 from typing import Optional
 import asyncio
-import chatbot_api.db as db
+import chatbot_api.db as db_ops
+from chatbot_api.database import db
 from chatbot_api.rag import load_kb
 from chatbot_api.chatbot import chat
-from chatbot_api.tools import is_order_query, order_lookup
 
 # ── Batch Layer imports ────────────────────────
 from batch.batch_views_db import (
@@ -25,47 +17,50 @@ from batch.batch_views_db import (
     get_emotion_trend,
     get_high_risk_customers,
     get_alert_report,
-    get_customer_risk,
 )
 from batch.producer import publish_message, publish_emotion, close_producer
 from batch.jobs import create_scheduler, run_all_jobs_now
-from batch.speed_layer import init_speed_layer, get_speed_layer
+from batch.speed_layer import init_speed_layer, get_speed_layer, track_message, track_emotion, track_new_ticket
 
 import logging
 logger = logging.getLogger(__name__)
-
 
 # ── Lifespan ──────────────────────────────────
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("⏳ Initializing Speed Layer...")
-    db.init_db()
-    db.seed_db()
+    print("⏳ Connecting to MongoDB...")
+    await db.connect()
+    
+    print("⏳ Initializing Databases...")
+    await db_ops.init_db()
+    await db_ops.seed_db()  # Seed demo data
+    await init_batch_db()
+    
     load_kb("data")
 
     # Init Speed Layer in-memory tracking
     init_speed_layer(feed_size=100, alert_size=200)
-    print("✅ Speed Layer initialized")
+    
+    # Backfill dữ liệu từ DB vào Speed Layer (nếu có)
+    from batch.speed_layer import sync_speed_layer_from_db
+    await sync_speed_layer_from_db()
 
-    print("⏳ Initializing Batch Layer...")
-    init_batch_db()
-
-    # Khởi APScheduler (non-blocking background thread)
+    # Khởi APScheduler (AsyncIOScheduler)
     scheduler = create_scheduler()
     scheduler.start()
-    print(f"✅ Scheduler started — {len(scheduler.get_jobs())} jobs active")
+    print(f"✅ Startup complete - MongoDB Connected - Scheduler active")
 
-    print("✅ Ready!")
     yield
 
     # Shutdown
     scheduler.shutdown(wait=False)
+    await db.close()
     close_producer()
     print("👋 Shutdown complete")
 
 
-app = FastAPI(title="CSKH Chatbot API", version="2.1-lambda", lifespan=lifespan)
+app = FastAPI(title="CSKH EmotionAI MongoDB", version="3.0", lifespan=lifespan)
 app.add_middleware(CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
@@ -73,8 +68,7 @@ app.add_middleware(CORSMiddleware,
     expose_headers=["X-Ticket-ID", "X-Accel-Buffering"],
 )
 
-
-# ── Request/Response models ───────────────────
+# ── Models ───────────────────
 
 class ChatRequest(BaseModel):
     message:   str
@@ -88,69 +82,39 @@ class ChatResponse(BaseModel):
     alert:      bool
     reason:     str
 
-
-# ── Helpers ───────────────────────────────────
-
-def _safe_publish_message(ticket_id, message_id, role, content, session_id=""):
-    """Publish lên Kafka — không raise exception nếu Kafka down."""
-    try:
-        publish_message(ticket_id, message_id, role, content, session_id)
-    except Exception as e:
-        logger.warning("[Kafka] publish_message failed (degraded mode): %s", e)
-
-def _safe_publish_emotion(ticket_id, message_id, emotion_data):
-    try:
-        publish_emotion(
-            ticket_id,  message_id,
-            emotion_data.get("emotion", "neutral"),
-            emotion_data.get("confidence", 0.0),
-            emotion_data.get("reason", ""),
-            emotion_data.get("alert", False),
-        )
-    except Exception as e:
-        logger.warning("[Kafka] publish_emotion failed (degraded mode): %s", e)
-
-
-# ── Speed Layer endpoints ─────────────────────
+# ── Endpoints ─────────────────────
 
 @app.get("/")
-def root():
-    return {"status": "ok", "version": "2.1-lambda", "architecture": "Lambda (Speed + Batch)"}
-
+async def root():
+    return {"status": "ok", "database": "mongodb", "engine": "motor"}
 
 @app.post("/chat", response_model=ChatResponse)
-def chat_endpoint(req: ChatRequest):
-    ticket_id = req.ticket_id or db.create_ticket(None, None, "other")
-
-    # Track new ticket in Speed Layer
+async def chat_endpoint(req: ChatRequest):
     if not req.ticket_id:
-        from batch.speed_layer import track_new_ticket as _track
-        _track(ticket_id)
+        ticket_id = await db_ops.create_ticket(None, None, "other")
+        track_new_ticket(ticket_id)
+    else:
+        ticket_id = req.ticket_id
 
-    history = db.get_messages(ticket_id)
+    history = await db_ops.get_messages(ticket_id)
     history_turns = [
-        {"role": "customer" if m["role"] == "customer" else "agent",
-         "text": m["content"]}
+        {"role": "customer" if m["role"] == "customer" else "agent", "text": m["content"]}
         for m in history
     ]
 
-    # Save + publish customer message
-    msg_id = db.save_message(ticket_id, "customer", req.message)
-    _safe_publish_message(ticket_id, msg_id, "customer", req.message, str(ticket_id))
+    # Save customer message
+    msg_id = await db_ops.save_message(ticket_id, "customer", req.message)
+    track_message(ticket_id, msg_id, "customer", req.message)
+    
+    # Process with LLM
+    reply, emotion = await chat(req.message, history_turns, session_id=str(ticket_id))
 
-    # Track customer message in Speed Layer
-    from batch.speed_layer import track_message as _track_msg
-    _track_msg(ticket_id, msg_id, "customer", req.message, str(ticket_id))
+    # Save bot reply
+    bot_msg_id = await db_ops.save_message(ticket_id, "bot", reply)
+    track_message(ticket_id, bot_msg_id, "bot", reply)
 
-    # Process
-    reply, emotion = chat(req.message, history_turns, session_id=str(ticket_id))
-
-    # Save + publish bot reply
-    bot_msg_id = db.save_message(ticket_id, "bot", reply)
-    _safe_publish_message(ticket_id, bot_msg_id, "bot", reply, str(ticket_id))
-
-    # Save + publish emotion
-    db.save_emotion(
+    # Save emotion analysis
+    await db_ops.save_emotion(
         ticket_id  = ticket_id,
         message_id = msg_id,
         emotion    = emotion.get("emotion", "neutral"),
@@ -158,17 +122,13 @@ def chat_endpoint(req: ChatRequest):
         reason     = emotion.get("reason", ""),
         alert      = emotion.get("alert", False),
     )
-    _safe_publish_emotion(ticket_id, msg_id, emotion)
-
-    # Track emotion in Speed Layer
-    from batch.speed_layer import track_emotion as _track_em
-    _track_em(
-        ticket_id,
-        msg_id,
-        emotion.get("emotion", "neutral"),
-        emotion.get("confidence", 0.0),
-        emotion.get("reason", ""),
-        emotion.get("alert", False),
+    track_emotion(
+        ticket_id  = ticket_id,
+        message_id = msg_id,
+        emotion    = emotion.get("emotion", "neutral"),
+        confidence = emotion.get("confidence", 0.0),
+        reason     = emotion.get("reason", ""),
+        alert      = emotion.get("alert", False),
     )
 
     return ChatResponse(
@@ -180,281 +140,104 @@ def chat_endpoint(req: ChatRequest):
         reason     = emotion.get("reason", ""),
     )
 
-
 @app.post("/chat/stream")
 async def chat_stream_endpoint(req: ChatRequest):
-    ticket_id = req.ticket_id or db.create_ticket(None, None, "other")
+    if not req.ticket_id:
+        ticket_id = await db_ops.create_ticket(None, None, "other")
+        track_new_ticket(ticket_id)
+    else:
+        ticket_id = req.ticket_id
 
-    history = db.get_messages(ticket_id)
+    history = await db_ops.get_messages(ticket_id)
     history_turns = [
-        {"role": "customer" if m["role"] == "customer" else "agent",
-         "text": m["content"]}
+        {"role": "customer" if m["role"] == "customer" else "agent", "text": m["content"]}
         for m in history
     ]
-    msg_id = db.save_message(ticket_id, "customer", req.message)
-    _safe_publish_message(ticket_id, msg_id, "customer", req.message, str(ticket_id))
+    msg_id = await db_ops.save_message(ticket_id, "customer", req.message)
+    track_message(ticket_id, msg_id, "customer", req.message)
 
     async def generate():
         full_reply = []
-
         from chatbot_api.orchestrator import strategy
         async for token in strategy.process_chat_stream(req.message, history_turns, session_id=str(ticket_id)):
             full_reply.append(token)
             yield token.encode("utf-8")
 
-        bot_reply  = "".join(full_reply)
-        bot_msg_id = db.save_message(ticket_id, "bot", bot_reply)
-        _safe_publish_message(ticket_id, bot_msg_id, "bot", bot_reply, str(ticket_id))
+        bot_reply = "".join(full_reply)
+        bot_msg_id = await db_ops.save_message(ticket_id, "bot", bot_reply)
+        track_message(ticket_id, bot_msg_id, "bot", bot_reply)
 
-        turns   = history_turns[-8:] + [{"role": "customer", "text": req.message}]
+        turns = history_turns[-8:] + [{"role": "customer", "text": req.message}]
         emotion = strategy.analyze_emotion(turns)
         if emotion:
-            db.save_emotion(
-                ticket_id  = ticket_id, message_id = msg_id,
-                emotion    = emotion.get("emotion", "neutral"),
-                confidence = emotion.get("confidence", 0.0),
-                reason     = emotion.get("reason", ""),
-                alert      = emotion.get("alert", False),
+            await db_ops.save_emotion(
+                ticket_id=ticket_id, message_id=msg_id,
+                emotion=emotion.get("emotion", "neutral"),
+                confidence=emotion.get("confidence", 0.0),
+                reason=emotion.get("reason", ""),
+                alert=emotion.get("alert", False),
             )
-            _safe_publish_emotion(ticket_id, msg_id, emotion)
+            track_emotion(
+                ticket_id=ticket_id, message_id=msg_id,
+                emotion=emotion.get("emotion", "neutral"),
+                confidence=emotion.get("confidence", 0.0),
+                reason=emotion.get("reason", ""),
+                alert=emotion.get("alert", False),
+            )
 
     return StreamingResponse(
         generate(),
         media_type="text/plain; charset=utf-8",
         headers={
-            "X-Ticket-ID":       str(ticket_id),
+            "X-Ticket-ID": str(ticket_id),
             "X-Accel-Buffering": "no",
-            "Cache-Control":     "no-cache",
+            "Cache-Control": "no-cache",
         },
     )
 
-
-# ── Existing endpoints ────────────────────────
-
 @app.get("/history/{ticket_id}")
-def get_history(ticket_id: int):
-    msgs = db.get_messages(ticket_id)
+async def get_history(ticket_id: int):
+    msgs = await db_ops.get_messages(ticket_id)
     if not msgs: raise HTTPException(404, "Ticket not found")
     return {"ticket_id": ticket_id, "messages": msgs}
 
 @app.get("/orders/{order_id}")
-def get_order(order_id: str):
-    result = db.get_order(order_id)
+async def get_order(order_id: str):
+    result = await db_ops.get_order(order_id)
     if not result: raise HTTPException(404, "Order not found")
     return result
 
 @app.get("/admin/tickets")
-def admin_tickets():
-    tickets = db.get_all_tickets_with_emotions()
+async def admin_tickets():
+    tickets = await db_ops.get_all_tickets_with_emotions()
     return {"tickets": tickets}
 
-
-# ── Batch Layer (Serving Layer) endpoints ─────
-
-@app.get("/admin/batch/emotion-trend")
-def batch_emotion_trend(hours: int = 24):
-    """
-    Serving Layer: emotion distribution trong N giờ qua.
-    Đọc từ batch_views (pre-computed) — rất nhanh.
-    """
-    trend = get_emotion_trend(hours=hours)
-    return {"hours": hours, "data": trend, "source": "batch_view"}
-
-
-@app.get("/admin/batch/high-risk-customers")
-def batch_high_risk(limit: int = 20):
-    """
-    Serving Layer: danh sách khách hàng risk cao.
-    Kết quả từ batch customer_segment_job.
-    """
-    customers = get_high_risk_customers(limit=limit)
-    return {"customers": customers, "source": "batch_view"}
-
-
-@app.get("/admin/batch/alert-report/{date}")
-def batch_alert_report(date: str):
-    """
-    Serving Layer: báo cáo alert ngày cụ thể (YYYY-MM-DD).
-    """
-    report = get_alert_report(date)
-    if not report:
-        raise HTTPException(404, f"Chưa có report cho ngày {date}")
-    return {**report, "source": "batch_view"}
-
-
-@app.get("/admin/batch/customer-risk/{customer_id}")
-def batch_customer_risk(customer_id: int):
-    """
-    Serving Layer: risk profile của 1 khách hàng.
-    Merge: batch risk score + speed layer recent emotions.
-    """
-    batch_risk = get_customer_risk(customer_id)
-
-    # Speed view: lấy emotion gần nhất từ Speed Layer
-    speed_conn = db.get_conn()
-    recent = speed_conn.execute("""
-        SELECT el.emotion, el.confidence, el.alert, el.created_at
-        FROM emotion_logs el
-        JOIN tickets t ON t.id = el.ticket_id
-        WHERE t.customer_id = ?
-        ORDER BY el.created_at DESC LIMIT 5
-    """, (customer_id,)).fetchall()
-    speed_conn.close()
-
-    return {
-        "customer_id":    customer_id,
-        "batch_risk":     batch_risk,                        # computed giờ trước
-        "recent_emotions": [dict(r) for r in recent],       # real-time
-        "source":         "merged (batch + speed)",
-    }
-
-
-@app.post("/admin/batch/run-now")
-def trigger_batch_now(job: Optional[str] = None):
-    """
-    Manual trigger — chạy batch jobs ngay (debug / backfill).
-    job: "emotion_hourly" | "customer_segment" | "alert_report" | None (all)
-    """
-    import threading
-    from batch.jobs import emotion_hourly_job, customer_segment_job, alert_report_job
-
-    job_map = {
-        "emotion_hourly":   emotion_hourly_job,
-        "customer_segment": customer_segment_job,
-        "alert_report":     alert_report_job,
-    }
-
-    if job and job not in job_map:
-        raise HTTPException(400, f"Job không hợp lệ. Chọn: {list(job_map.keys())}")
-
-    fn = job_map.get(job, run_all_jobs_now)
-    threading.Thread(target=fn, daemon=True).start()
-
-    return {"status": "triggered", "job": job or "all"}
-
-
-# ── Speed Layer endpoints ────────────────────────────
-
-@app.get("/admin/speed/stats")
-def speed_stats():
-    """
-    Speed Layer stats (từ lúc start server).
-    Merge với batch để có full history.
-    """
-    layer = get_speed_layer()
-    if not layer:
-        return {"error": "Speed Layer not initialized"}, 503
-
-    return {
-        "layer": "speed",
-        "stats": layer.get_stats(),
-    }
-
-
-@app.get("/admin/speed/feed")
-def speed_feed(limit: int = 50):
-    """
-    N tin nhắn gần nhất (customer messages).
-    Realtime feed cho Live Feed tab.
-    """
-    layer = get_speed_layer()
-    if not layer:
-        return {"error": "Speed Layer not initialized"}, 503
-
-    feed = layer.get_recent_feed(limit=limit)
-
-    # Enrich với emotion data nếu có
-    enriched = []
-    for item in feed:
-        ticket_id = item["ticket_id"]
-        emotion_data = layer.get_ticket_emotion(ticket_id)
-        enriched.append({
-            **item,
-            "emotion": emotion_data.get("emotion") if emotion_data else "neutral",
-            "confidence": emotion_data.get("confidence", 0.0) if emotion_data else 0.0,
-            "alert": emotion_data.get("alert", False) if emotion_data else False,
-        })
-
-    return {
-        "layer": "speed",
-        "feed": enriched,
-    }
-
-
-@app.get("/admin/speed/alerts")
-def speed_alerts(limit: int = 50):
-    """
-    N alerts gần nhất.
-    Realtime alerts cho Admin Dashboard.
-    """
-    layer = get_speed_layer()
-    if not layer:
-        return {"error": "Speed Layer not initialized"}, 503
-
-    alerts = layer.get_alert_queue(limit=limit)
-
-    return {
-        "layer": "speed",
-        "alerts": alerts,
-    }
-
-
-# ── Serving Layer (merged) endpoints ─────────────────
+@app.get("/admin/serving/dashboard")
+async def serving_dashboard():
+    """Serving Layer: Dashboard overview merged from Batch + Speed."""
+    from batch.serving_layer import get_dashboard_overview
+    return await get_dashboard_overview()
 
 @app.get("/admin/serving/emotion-stats")
-def serving_emotion_stats(hours: int = 24):
-    """
-    Serving Layer: merge Batch + Speed emotion stats.
-    Return distribution + total alerts.
-    """
+async def serving_emotion_stats(hours: int = 24):
     from batch.serving_layer import merge_emotion_stats
-    result = merge_emotion_stats(hours=hours)
-    return result
-
-
-@app.get("/admin/serving/high-risk")
-def serving_high_risk(limit: int = 20):
-    """
-    Serving Layer: merge Batch + Speed high risk customers.
-    Batch risk score + Speed recent emotion.
-    """
-    from batch.serving_layer import merge_high_risk_customers
-    result = merge_high_risk_customers(limit=limit)
-    return result
-
-
-@app.get("/admin/serving/alert-report/{date}")
-def serving_alert_report(date: str):
-    """
-    Serving Layer: merge Batch + Speed alert report.
-    Batch daily summary + Speed alerts hôm nay.
-    """
-    from batch.serving_layer import merge_alert_report
-    result = merge_alert_report(date)
-    return result
-
+    return await merge_emotion_stats(hours=hours)
 
 @app.get("/admin/serving/live-feed")
-def serving_live_feed(limit: int = 50):
-    """
-    Serving Layer: live feed với emotion enrichment.
-    Realtime từ Speed Layer.
-    """
+async def serving_live_feed(limit: int = 50):
     from batch.serving_layer import merge_live_feed
-    result = merge_live_feed(limit=limit)
-    return result
+    return await merge_live_feed(limit=limit)
 
+@app.get("/admin/serving/high-risk")
+async def serving_high_risk(limit: int = 20):
+    from batch.serving_layer import merge_high_risk_customers
+    return await merge_high_risk_customers(limit=limit)
 
-@app.get("/admin/serving/dashboard")
-def serving_dashboard():
-    """
-    Serving Layer: tổng hợp dashboard.
-    Merge Batch + Speed → full overview.
-    """
-    from batch.serving_layer import get_dashboard_overview
-    result = get_dashboard_overview()
-    return result
-
+@app.post("/admin/batch/run-now")
+async def trigger_batch_now():
+    """Manual trigger for batch jobs."""
+    asyncio.create_task(run_all_jobs_now())
+    return {"status": "triggered"}
 
 if __name__ == "__main__":
     import uvicorn

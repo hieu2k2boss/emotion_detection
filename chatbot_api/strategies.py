@@ -23,7 +23,7 @@ class ChatStrategy(ABC):
     """Interface cho các chiến lược xử lý hội thoại và phân tích cảm xúc."""
     
     @abstractmethod
-    def process_chat(self, user_message: str, history: List[Dict[str, str]], session_id: str = "default") -> Tuple[str, Dict[str, Any]]:
+    async def process_chat(self, user_message: str, history: List[Dict[str, str]], session_id: str = "default") -> Tuple[str, Dict[str, Any]]:
         """Xử lý tin nhắn (Non-streaming)."""
         pass
 
@@ -52,9 +52,9 @@ class LLMChatStrategy(ChatStrategy):
         lines.append("Agent:")
         return "\n".join(lines)
 
-    def process_chat(self, user_message: str, history: List[Dict[str, str]], session_id: str = "default") -> Tuple[str, Dict[str, Any]]:
+    async def process_chat(self, user_message: str, history: List[Dict[str, str]], session_id: str = "default") -> Tuple[str, Dict[str, Any]]:
         if is_order_query(user_message):
-            reply = order_lookup(user_message)
+            reply = await order_lookup(user_message)
             emotion = self.analyze_emotion(history[-8:] + [{"role": "customer", "text": user_message}])
             return reply, emotion
 
@@ -113,11 +113,11 @@ class LLMChatStrategy(ChatStrategy):
 class MockChatStrategy(ChatStrategy):
     """Chiến lược Mock (Semantic Router) phục vụ demo offline."""
 
-    def process_chat(self, user_message: str, history: List[Dict[str, str]], session_id: str = "default") -> Tuple[str, Dict[str, Any]]:
+    async def process_chat(self, user_message: str, history: List[Dict[str, str]], session_id: str = "default") -> Tuple[str, Dict[str, Any]]:
         emotion_data = self.analyze_emotion(history[-8:] + [{"role": "customer", "text": user_message}])
         
         if is_order_query(user_message):
-            reply = order_lookup(user_message)
+            reply = await order_lookup(user_message)
             return reply, emotion_data
 
         label = emotion_data.get("emotion", "neutral")
@@ -126,7 +126,7 @@ class MockChatStrategy(ChatStrategy):
 
     async def process_chat_stream(self, user_message: str, history: List[Dict[str, str]], session_id: str = "default") -> AsyncGenerator[str, None]:
         # Giả lập streaming bằng cách trả về từng từ hoặc đoạn từ template
-        reply, _ = self.process_chat(user_message, history, session_id)
+        reply, _ = await self.process_chat(user_message, history, session_id)
         
         # Chia nhỏ reply thành các "token" giả để tạo hiệu ứng gõ
         words = reply.split(" ")
