@@ -133,8 +133,65 @@ def parse_result(raw: str) -> dict:
     try:    return json.loads(m.group()) if m else {}
     except: return {}
 
+<<<<<<< HEAD
+def compute_confidence(
+    ensemble_conf: float,   # từ voting
+    rag_conf:      float,   # từ KB similarity
+    neg_signals:   int,     # từ context_analyzer
+) -> dict:
+
+    # Trọng số
+    base = ensemble_conf * 0.6 + rag_conf * 0.4
+
+    # Penalty nếu ngữ cảnh phức tạp mà KB không hỗ trợ
+    if neg_signals >= 2 and rag_conf < 0.5:
+        base *= 0.8
+
+    return {
+        "confidence":      round(base, 3),
+        "ensemble_conf":   ensemble_conf,   # để debug
+        "rag_conf":        rag_conf,        # để debug
+        "needs_review":    base < 0.65,     # flag cho human review
+    }
+
+def rag_confidence(query: str, retrieved_docs: list) -> float:
+    if not retrieved_docs:
+        return 0.0
+
+    # Giả sử hybrid_search trả về score
+    scores = [doc.get("score", 0) for doc in retrieved_docs]
+
+    top_score  = max(scores)        # doc gần nhất
+    mean_score = sum(scores) / len(scores)
+
+    # Kết hợp: top score quan trọng hơn
+    return round(top_score * 0.7 + mean_score * 0.3, 3)
+
+
+def ensemble_predict(prompt: str, n: int = 5) -> dict:
+    results = []
+    for _ in range(n):
+        session_id = f"emotion-{uuid.uuid4().hex[:8]}"
+        raw    = call_llm(prompt, session_id=session_id)
+        parsed = parse_result(raw)
+        if parsed.get("emotion"):
+            results.append(parsed["emotion"])
+
+    if not results:
+        return {"emotion": "unknown", "confidence": 0.0}
+
+    # Đếm vote
+    from collections import Counter
+    counts    = Counter(results)
+    top_label = counts.most_common(1)[0][0]
+    confidence = counts[top_label] / len(results)
+    return {"emotion": top_label, "confidence": round(confidence, 3)}
+
+# ── Orchestrator chính ────────────────────────
+=======
 from chatbot_api.strategies import StrategyFactory
 from chatbot_api.config import settings
+>>>>>>> a96b483849bafe9b2648828e1451c3b932e341ef
 
 # ── Cấu hình Strategy ─────────────────────────
 strategy = StrategyFactory.get_strategy(use_mock=settings.USE_MOCK_MODE)
@@ -156,7 +213,7 @@ def real_llm_orchestrator(turns: list) -> dict:
     )
 
     # Step 2: Tools
-    mem.slang_found    = tool_slang_lookup(last_cust)["found"]
+    mem.slang_found    = tool_slang_lookup(last_cust)["found"]  # Từ lóng
     mem.retrieved_docs = hybrid_search(last_cust, top_k=3)
 
     if mem.complexity == "complex":
@@ -177,8 +234,17 @@ def real_llm_orchestrator(turns: list) -> dict:
         raw          = call_llm(prompt, session_id=session_id)
         mem.result   = parse_result(raw)
         conf         = mem.result.get("confidence", 0)
+        mem.result   = ensemble_predict(prompt, n=5)
+        rag_conf     = rag_confidence(mem.query, mem.retrieved_docs)
+        confidence   = compute_confidence(
+            ensemble_conf = mem.result["confidence"],
+            rag_conf      = rag_conf,
+            neg_signals   = mem.context_summary["neg_signals"],
+        )
 
-        if conf >= 0.75:
+        mem.result["confidence"]   = confidence["confidence"]
+        mem.result["needs_review"] = confidence["needs_review"]
+        if confidence["confidence"] >= 0.75:
             break
         if mem.complexity == "complex" and attempt == 1:
             mem.query = f"[Phân tích kỹ hơn] {mem.query}"
